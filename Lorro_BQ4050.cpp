@@ -363,7 +363,10 @@ boolean Lorro_BQ4050::readDFBlockReg( char devAddress, byte regAddress1, byte re
 
 void Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize ){
 
-  //function that handles writing data to the flash on the BQ4050
+  //function that handles writing data to the flash on the BQ4050.
+  //Data is between 1 and 4 bytes long
+  //Addresses are 2 bytes long
+
   //For CRC calculation, the address needs to include the write bit, so shifts to the left
   byte addr = devAddress << 1;
   //This is a value that gets sent to the BQ4050 to let it know how many bytes are heading its way
