@@ -32,6 +32,12 @@
 
 #define DFProtectionsCUVThreshold
 
+// struct testStructt{
+//   int16_t val = 2850;
+//   uint16_t addr = 0x4481;
+// } testStruct;
+
+
 class Lorro_BQ4050{
  public:
 	Lorro_BQ4050( char addr );
@@ -57,9 +63,19 @@ class Lorro_BQ4050{
   boolean getDSGstatus();
   void FETtoggle();
   void deviceReset();
-  template<typename T>
-  void writeFlash(const T& dataParam);
-  void writeThreshold();
+  template<typename T, typename S>
+  void writeFlash( const T& dataParam, const S datVal){
+
+    constexpr uint8_t byteLen = sizeof( datVal );
+    byte valBytes[ byteLen ];
+    for( int i = 0; i < byteLen; i++ ){
+      valBytes[ i ] = datVal >> ( i * 8 );
+    }
+    writeDFByteReg( BQ4050addr, dataParam.addr, valBytes, byteLen );
+
+  }
+  void writeThreshold( int16_t datVal );
+  void writeProtectionsOCD1Delay( uint8_t datVal );
   void writeOCD1Threshold();
   char BQ4050addr;
   boolean getDABlock();
@@ -97,168 +113,197 @@ class Lorro_BQ4050{
                                       "Discharge FET status",
                                       "System present low"};
 
-struct DFt{
-  struct Protectionst{
-    struct CUVt{ //Cell undervoltage settings
-      struct Thresholdt{
-        int16_t val = 2850; //milliVolts
-        uint16_t addr = 0x4481;
-      } Threshold;
-      struct Delayt{
-        uint8_t val = 2; //seconds
-        uint16_t addr = 0x4483;
-      } Delay;
-      struct Recoveryt{
-        int16_t val = 2900; //milliVolts
-        uint16_t addr = 0x4484;
-      } Recovery;
-    } CUV;
-    struct COVt{ //Cell overvoltage settings
-      struct ThresholdLowTempt{
-        int16_t val = 4280; //milliVolts
-        static const uint16_t addr = 0x4486;
-      } ThresholdLowTemp;
-      struct ThresholdStandardTempt{
-        int16_t val = 4280; //milliVolts
-        uint16_t addr = 0x4488;
-      } ThresholdStandardTemp;
-      struct ThresholdHighTempt{
-        int16_t val = 4280; //milliVolts
-        uint16_t addr = 0x448A;
-      } ThresholdHightTemp;
-      struct ThresholdRecTempt{
-        int16_t val = 4280; //milliVolts
-        uint16_t addr = 0x448C;
-      } ThresholdRecTemp;
-      struct Delayt{
-        uint8_t val = 2; //seconds
-        uint16_t addr = 0x448E;
-      } Delay;
-      struct RecoveryLowTempt{
-        int16_t val = 4280; //milliVolts
-        uint16_t addr = 0x448F;
-      } RecoveryLowTemp;
-      struct RecoveryStandardTempt{
-        int16_t val = 4280; //milliVolts
-        uint16_t addr = 0x4491;
-      } RecoveryStandardTemp;
-      struct RecoveryHighTempt{
-        int16_t val = 4280; //milliVolts
-        uint16_t addr = 0x4493;
-      } RecoveryHighTemp;
-      struct RecoveryRecTempt{
-        int16_t val = 4280; //milliVolts
-        uint16_t addr = 0x4495;
-      } RecoveryRecTemp;
-    } COV;
-    struct OCC1t{ //Over Current Charge settings
-      struct Thresholdt{
-        int16_t val = 5000; //milliAmps (positive value is charging, negative is discharging)
-        uint16_t addr = 0x4497;
-      } Threshold;
-      struct Delayt{
-        uint8_t val = 6; //seconds
-        uint16_t addr = 0x4499;
-      } Delay;
-    } OCC1;
-    struct OCC2t{
-      struct Thresholdt{
-        int16_t val = 6000; //milliAmps (positive value is charging, negative is discharging)
-        uint16_t addr = 0x449A;
-      } Threshold ;
-      struct Delayt{
-        uint8_t val = 3; //seconds
-        uint16_t addr = 0x449C;
-      } Delay;
-    } OCC2;
-    struct OCC{
-      struct Thresholdt{
-        int16_t val = -200; //milliAmps (positive value is charging, negative is discharging)
-        uint16_t addr = 0x449D;
-      } Threshold ;
-      struct Delayt{
-        uint8_t val = 5; //seconds
-        uint16_t addr = 0x449F;
-      } Delay;
-    } OCC;
-    struct OCD1t{ //Over Current Discharge settings
-      struct Thresholdt{
-        int16_t val = -5100; //milliAmps (positive value is charging, negative is discharging)
-        static const uint16_t addr = 0x44A0;
-      } Threshold;
-      struct Delayt{
-        uint8_t val = 6; //seconds
-        static const uint16_t addr = 0x44A2;
-      } Delay;
-    } OCD1;
-    struct OCD2t{
-      struct Thresholdt{
-        int16_t val = -6000; //milliAmps (positive value is charging, negative is discharging)
-        uint16_t addr = 0x44A3;
-      } Threshold ;
-      struct Delayt{
-        uint8_t val = 3; //seconds
-        uint16_t addr = 0x44A5;
-      } Delay;
-    } OCD2;
-    struct OCDt{
-      struct Thresholdt{
-        int16_t val = 200; //milliAmps (positive value is charging, negative is discharging)
-        uint16_t addr = 0x44A6;
-      } Threshold ;
-      struct Delayt{
-        uint8_t val = 5; //seconds
-        uint16_t addr = 0x44A8;
-      } Delay;
-    } OCD;
-  } Protections;
-  struct GasGaugingt{
-    struct Designt{
-      struct DesignCapacitymAht{
-        int16_t val = 2600; //milliAmp hours
-        uint16_t addr = 0x444D;
-      } DesignCapacitymAh;
-      struct DesignCapacitymWht{
-        int16_t val = 3848; //milliWatt hours
-        uint16_t addr = 0x444F;
-      } DesignCapacitymWh;
-      struct DesignVoltaget{
-        int16_t val = 14800; //milliVolts
-        uint16_t addr = 0x4451;
-      } DesignVoltage;
-    } Design;
-    struct CEDVcfgt{
-      struct EMFt{
-        uint16_t val = 3743;
-        uint16_t addr = 0x4590;
-      } EMF;
-      struct C0t{
-        uint16_t val = 149;
-        uint16_t addr = 0x4592;
-      } C0;
-      struct R0t{
-        uint16_t val = 867;
-        uint16_t addr = 0x4594;
-      } R0;
-      struct T0t{
-        uint16_t val = 4030;
-        uint16_t addr = 0x4596;
-      } T0;
-      struct R1t{
-        uint16_t val = 316;
-        uint16_t addr = 0x4598;
-      } R1;
-      struct TCt{
-        uint8_t val = 9;
-        uint16_t addr = 0x459A;
-      } TC;
-      struct C1t{
-        uint8_t val = 0;
-        uint16_t addr = 0x459B;
-      } C1;
-    } CEDVcfg;
-  } GasGauging;
-} DF;
+    struct DFt{
+      struct Protectionst{
+        struct CUVt{ //Cell undervoltage settings
+          struct Thresholdt{
+            int16_t val = 2850; //milliVolts
+            uint16_t addr = 0x4481;
+          } threshold;
+          struct Delayt{
+            uint8_t val = 2; //seconds
+            uint16_t addr = 0x4483;
+          } delay;
+          struct Recoveryt{
+            int16_t val = 2900; //milliVolts
+            uint16_t addr = 0x4484;
+          } recovery;
+        } CUV;
+        struct COVt{ //Cell overvoltage settings
+          struct ThresholdLowTempt{
+            int16_t val = 4280; //milliVolts
+            static const uint16_t addr = 0x4486;
+          } thresholdLowTemp;
+          struct ThresholdStandardTempt{
+            int16_t val = 4280; //milliVolts
+            uint16_t addr = 0x4488;
+          } thresholdStandardTemp;
+          struct ThresholdHighTempt{
+            int16_t val = 4280; //milliVolts
+            uint16_t addr = 0x448A;
+          } thresholdHightTemp;
+          struct ThresholdRecTempt{
+            int16_t val = 4280; //milliVolts
+            uint16_t addr = 0x448C;
+          } thresholdRecTemp;
+          struct Delayt{
+            uint8_t val = 2; //seconds
+            uint16_t addr = 0x448E;
+          } delay;
+          struct RecoveryLowTempt{
+            int16_t val = 4280; //milliVolts
+            uint16_t addr = 0x448F;
+          } recoveryLowTemp;
+          struct RecoveryStandardTempt{
+            int16_t val = 4280; //milliVolts
+            uint16_t addr = 0x4491;
+          } recoveryStandardTemp;
+          struct RecoveryHighTempt{
+            int16_t val = 4280; //milliVolts
+            uint16_t addr = 0x4493;
+          } recoveryHighTemp;
+          struct RecoveryRecTempt{
+            int16_t val = 4280; //milliVolts
+            uint16_t addr = 0x4495;
+          } recoveryRecTemp;
+        } COV;
+        struct OCC1t{ //Over Current Charge settings
+          struct Thresholdt{
+            int16_t val = 5000; //milliAmps (positive value is charging, negative is discharging)
+            uint16_t addr = 0x4497;
+          } threshold;
+          struct Delayt{
+            uint8_t val = 6; //seconds
+            uint16_t addr = 0x4499;
+          } delay;
+        } OCC1;
+        struct OCC2t{
+          struct Thresholdt{
+            int16_t val = 5900; //milliAmps (positive value is charging, negative is discharging)
+            uint16_t addr = 0x449A;
+          } threshold ;
+          struct Delayt{
+            uint8_t val = 3; //seconds
+            uint16_t addr = 0x449C;
+          } delay;
+        } OCC2;
+        struct OCCt{
+          struct Thresholdt{
+            int16_t val = -200; //milliAmps (positive value is charging, negative is discharging)
+            uint16_t addr = 0x449D;
+          } threshold ;
+          struct Delayt{
+            uint8_t val = 5; //seconds
+            uint16_t addr = 0x449F;
+          } delay;
+        } OCC;
+        struct OCD1t{ //Over Current Discharge settings
+          struct Thresholdt{
+            int16_t val = -5000; //milliAmps (positive value is charging, negative is discharging)
+            static const uint16_t addr = 0x44A0;
+          } threshold;
+          struct Delayt{
+            uint8_t val = 6; //seconds
+            static const uint16_t addr = 0x44A2;
+          } delay;
+        } OCD1;
+        struct OCD2t{
+          struct Thresholdt{
+            int16_t val = -6000; //milliAmps (positive value is charging, negative is discharging)
+            uint16_t addr = 0x44A3;
+          } threshold ;
+          struct Delayt{
+            uint8_t val = 3; //seconds
+            uint16_t addr = 0x44A5;
+          } delay;
+        } OCD2;
+        struct OCDt{
+          struct Thresholdt{
+            int16_t val = 200; //milliAmps (positive value is charging, negative is discharging)
+            uint16_t addr = 0x44A6;
+          } threshold ;
+          struct Delayt{
+            uint8_t val = 5; //seconds
+            uint16_t addr = 0x44A8;
+          } delay;
+        } OCD;
+      } protections;
+      struct GasGaugingt{
+        struct Designt{
+          struct DesignCapacitymAht{
+            int16_t val = 2600; //milliAmp hours
+            uint16_t addr = 0x444D;
+          } designCapacitymAh;
+          struct DesignCapacitymWht{
+            int16_t val = 3848; //milliWatt hours
+            uint16_t addr = 0x444F;
+          } designCapacitymWh;
+          struct DesignVoltaget{
+            int16_t val = 14800; //milliVolts
+            uint16_t addr = 0x4451;
+          } designVoltage;
+        } design;
+        struct Statet{
+          struct LearnedFCCt{
+            int16_t val = 2600;
+            uint16_t addr = 0x4100;
+          } learnedFCC;
+          struct CycleCountt{
+            uint16_t val = 3;
+            uint16_t addr = 0x4140;
+          } cycleCount;
+        } state;
+        struct CEDVcfgt{
+          struct EMFt{
+            uint16_t val = 3743;
+            uint16_t addr = 0x4590;
+          } EMF;
+          struct C0t{
+            uint16_t val = 149;
+            uint16_t addr = 0x4592;
+          } C0;
+          struct R0t{
+            uint16_t val = 867;
+            uint16_t addr = 0x4594;
+          } R0;
+          struct T0t{
+            uint16_t val = 4030;
+            uint16_t addr = 0x4596;
+          } T0;
+          struct R1t{
+            uint16_t val = 316;
+            uint16_t addr = 0x4598;
+          } R1;
+          struct TCt{
+            uint8_t val = 9;
+            uint16_t addr = 0x459A;
+          } TC;
+          struct C1t{
+            uint8_t val = 0;
+            uint16_t addr = 0x459B;
+          } C1;
+        } CEDVcfg;
+      } gasGauging;
+    } ;
+
+// struct Flasht{
+//   struct Settingst{
+//     struct UnderVoltaget{
+      // struct Thresholdt{
+      //   int16_t val = 2850;
+      //   uint16_t addr = 0x4481;
+      // } Threshold;
+      // struct Delayt{
+      //   uint8_t val = 2;
+      //   uint16_t addr = 0x4483;
+      // } Delay;
+      // struct Recoveryt{
+      //   int16_t val = 2900;
+      //   uint16_t addr = 0x4484;
+      // } Recovery;
+//     } UnderVoltage;
+//   } Settings;
+// } Flash;
 
 
  private:

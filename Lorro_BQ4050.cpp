@@ -234,32 +234,36 @@ void Lorro_BQ4050::deviceReset(){
   byte manu = 0x44;
   write2ByteReg( BQ4050addr, manu, deviceResetReg, 0x00 );
 }
+//
+// template<typename T, typename S>
+// void Lorro_BQ4050::writeFlash( const T& dataParam, const S datVal){
+//
+//   constexpr uint8_t byteLen = sizeof( datVal );
+//   byte valBytes[ byteLen ];
+//   for( int i = 0; i < byteLen; i++ ){
+//     valBytes[ i ] = datVal >> ( i * 8 );
+//   }
+//   writeDFByteReg( BQ4050addr, dataParam.addr, valBytes, byteLen );
+//
+// }
 
-template<typename T>
-void writeFlash(const T& dataParam){
-
-  byte addr1 = dataParam.addr & 0xFF;
-  byte addr2 = ( dataParam.addr >> 8 ) & 0xFF;
-
-  constexpr uint8_t byteLen = sizeof( dataParam.val );
-  byte valBytes[ byteLen ];
-  for( int i = 0; i < byteLen; i++ ){
-    valBytes[ i ] = dataParam.val >> ( i * 8 );
-  }
-
+void Lorro_BQ4050::writeThreshold( int16_t datVal ){
+  DFt DF;
+  writeFlash( DF.protections.OCD1.threshold, datVal );
 }
 
-void writeThreshold(){
-  writeFlash( DF->Protections->OCD1->Threshold );
+void Lorro_BQ4050::writeProtectionsOCD1Delay( uint8_t datVal ){
+  DFt DF;
+  writeFlash( DF.protections.OCD1.delay, datVal );
 }
 
 void Lorro_BQ4050::writeOCD1Threshold(){
-  byte data[ 4 ];
-  uint8_t datLen = sizeof( DF.Protections.OCD1.Threshold.val );
-  for( uint8_t i = 0; i < datLen; i++ ){
-    data[i] = byte( DF.Protections.OCD1.Threshold.val >> ( i * 8 ) );
-  }
-  writeDFByteReg( BQ4050addr, DF.Protections.OCD1.Threshold.addr, data, datLen );
+  // byte data[ 4 ];
+  // uint8_t datLen = sizeof( DF.Protections.OCD1.Threshold.val );
+  // for( uint8_t i = 0; i < datLen; i++ ){
+  //   data[i] = byte( DF.Protections.OCD1.Threshold.val >> ( i * 8 ) );
+  // }
+  // writeDFByteReg( BQ4050addr, DF.Protections.OCD1.Threshold.addr, data, datLen );
 }
 
 boolean Lorro_BQ4050::getDABlock(){
@@ -387,7 +391,7 @@ void Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte *da
   //send CRC at the end
   Wire.send( PECcheck );
   Wire.endTransmission();
-  delay(5);
+  delay(20);
 
 }
 
