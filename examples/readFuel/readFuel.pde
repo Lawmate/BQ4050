@@ -15,7 +15,7 @@
 **/
 #include <Wire.h>
 #include <SPI.h>
-#include <Arduino_BQ4050.h>
+#include <Lorro_BQ4050.h>
 
 // If using the breakout with SPI, define the pins for SPI communication.
 #define PN532_SCK  (2)

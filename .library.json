@@ -1,5 +1,5 @@
 {
-    "name": "Arduino BQ4050",
+    "name": "Lorro BQ4050",
     "version": "0.1",
     "keywords": [
         "communication"
@@ -34,10 +34,11 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/Lawmate/Arduino-BQ4050"
+        "url": "https://github.com/Lawmate/BQ4050"
     },
     "homepage": null,
     "export": {
+        "include": null,
         "exclude": [
             "extras",
             "docs",
