@@ -598,7 +598,7 @@ class Lorro_BQ4050{
 	byte readByteReg( char devAddress, byte regAddress );
 	byte readDFByteReg( char devAddress, byte regAddress1, byte regAddress2 );
   boolean readDFBlockReg( char devAddress, byte regAddress1, byte regAddress2, byte *blockData );
-  void writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize );
+  boolean writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize );
 	byte readDFByteReg2( char devAddress, byte regAddress1, byte regAddress2 );
 	uint16_t read2ByteReg( char devAddress, byte regAddress );
   boolean readDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen );
@@ -607,7 +607,7 @@ class Lorro_BQ4050{
 	void writeByteReg( byte devAddress, byte regAddress, byte dataByte );
 	void write2ByteReg( byte devAddress, byte regAddress, byte dataByte1, byte dataByte2 );
   void readMACblock( char devAddress, byte regAddress, byte *block );
-  void writeCommand( char devAddress, byte regAddress );
+  boolean writeCommand( char devAddress, byte regAddress );
   void CalculateTable_CRC8();
   byte Compute_CRC8(byte *bytes, uint8_t byteLen);
 

@@ -103,85 +103,30 @@ void Lorro_BQ4050::FETtoggle(){
 }
 
 void Lorro_BQ4050::deviceReset(){
-  byte manu = 0x44;
-  write2ByteReg( BQ4050addr, manu, deviceResetReg, 0x00 );
+  writeCommand( BQ4050addr, deviceResetReg );
 }
-//
-// template<typename T, typename S>
-// void Lorro_BQ4050::writeFlash( const T& dataParam, const S datVal){
-//
-//   constexpr uint8_t byteLen = sizeof( datVal );
-//   byte valBytes[ byteLen ];
-//   for( int i = 0; i < byteLen; i++ ){
-//     valBytes[ i ] = datVal >> ( i * 8 );
-//   }
-//   writeDFByteReg( BQ4050addr, dataParam.addr, valBytes, byteLen );
-//
-// }
-
-// void Lorro_BQ4050::writeThreshold( int16_t datVal ){
-//   DFt DF;
-//   writeFlash( DF.protections.OCD1.threshold, datVal );
-// }
-
-// void Lorro_BQ4050::writeProtectionsOCD1Delay( uint8_t datVal ){
-//   DFt DF;
-//   writeFlash( DF.protections.OCD1.delay, datVal );
-// }
-
-// void Lorro_BQ4050::writeOCD1Threshold(){
-//   // byte data[ 4 ];
-//   // uint8_t datLen = sizeof( DF.Protections.OCD1.Threshold.val );
-//   // for( uint8_t i = 0; i < datLen; i++ ){
-//   //   data[i] = byte( DF.Protections.OCD1.Threshold.val >> ( i * 8 ) );
-//   // }
-//   // writeDFByteReg( BQ4050addr, DF.Protections.OCD1.Threshold.addr, data, datLen );
-// }
-
-// boolean Lorro_BQ4050::getDABlock(){
-//   byte addr1 = 0x45;
-//   byte addr2 = 0x60;
-//   byte blockVals[32];
-//   if( readDFBlockReg(  BQ4050addr, addr1, addr2, blockVals ) ){
-//     for( int i = 0; i < 32; i++ ){
-//       Serial.println( blockVals[i], HEX );
-//     }
-//     return true;
-//   } else{
-//     return false;
-//   }
-// }
 
 // I2C functions below here
 //----------------------------------------------
 
 
-
-// uint16_t Lorro_BQ4050::read2ByteReg(char devAddress, byte regAddress){
-//
-//   byte dataByte[2] = {0};
-//   Wire.beginTransmission( devAddress );
-//   Wire.write( regAddress );
-//   Wire.endTransmission();
-//
-//   Wire.requestFrom( devAddress , 3);
-//   if( Wire.available() > 0 ){
-//     dataByte[0] = Wire.receive();
-//     dataByte[1] = Wire.receive();
-//   }
-//   uint16_t val = ( dataByte[1] << 8 ) + dataByte[0];
-//   return val;
-//
-// }
-
 boolean Lorro_BQ4050::readDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen ){
 
+  //Function to read data from the device registers
+
+  //Add in the device address to the buffer
   Wire.beginTransmission( devAddress );
+  //Add the one byte register address
   Wire.write( regAddress );
+  //Send out buffer and log response
   byte ack = Wire.endTransmission();
+  //If data is ackowledged, proceed
   if( ack == 0 ){
+    //Request a number of bytes from the device address
     Wire.requestFrom( devAddress , (int16_t) arrLen );
+    //If there is data in the in buffer
     if( Wire.available() > 0 ){
+      //Cycle through, loading data into array
       for( uint8_t i = 0; i < arrLen; i++ ){
         dataVal[i] = Wire.receive();
       }
@@ -195,16 +140,29 @@ boolean Lorro_BQ4050::readDataReg( char devAddress, byte regAddress, byte *dataV
 
 boolean Lorro_BQ4050::writeDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen ){
 
+  //Function that writes data to a register with a one byte address
+
+  //Create an array of all byte to be sent to enable PEC calculation later
+  //Device address is shifted right 1 bit to simulate a write bit
   byte byteArr[ 6 ] = { ( byte )( devAddress << 1 ), regAddress, 0, 0, 0, 0 };
+  //Load address into buffer
   Wire.beginTransmission( devAddress );
+  //The register addres we're writing to
   Wire.write( regAddress );
+  //Cycle through the byte array
   for( int i = 0; i < arrLen; i++ ){
+    //Add the data after the device address and the register address
     byteArr[ i + 2 ] = dataVal [ i ];
+    //Send the data to the buffer
     Wire.write( dataVal[ i ] );
   }
+  //Calculate the PEC byte based on the other bytes being sent
   byte PECcheck = Compute_CRC8( byteArr, arrLen + 2 );
+  //Add PEC byte to buffer
   Wire.write( PECcheck );
+  //Send out buffer, logging whether an ack is received
   byte ack = Wire.endTransmission();
+  //return result of ack
   if( ack == 0 ){
     return true;
   }else{
@@ -213,66 +171,7 @@ boolean Lorro_BQ4050::writeDataReg( char devAddress, byte regAddress, byte *data
 
 }
 
-// byte Lorro_BQ4050::readByteReg( char devAddress, byte regAddress ){
-//   byte dataByte = 0;
-//
-//   Wire.beginTransmission( devAddress );
-//   Wire.write( regAddress );
-//   Wire.endTransmission();
-//
-//   Wire.requestFrom( devAddress , 1);
-//   if( Wire.available() > 0 ){
-//     dataByte = Wire.receive();
-//   }
-//   return dataByte;
-// }
-
-// byte Lorro_BQ4050::readDFByteReg( char devAddress, byte regAddress1, byte regAddress2 ){
-//
-//   byte dataByte = 0;
-//   byte sentData[3] = { regAddress2, regAddress1 };
-//
-//   Wire.beginTransmission( devAddress );
-//   Wire.send( 0x00 );
-//   Wire.send( sentData, 2 );
-//   Serial.print("return status: ");
-//   Serial.println(Wire.endTransmission());
-//   delay(5);
-//
-//   Wire.requestFrom( devAddress , 3);
-//   if( Wire.available() > 0 ){
-//     dataByte = Wire.receive();
-//   }
-//
-//   return dataByte;
-// }
-
-// boolean Lorro_BQ4050::readDFBlockReg( char devAddress, byte regAddress1, byte regAddress2, byte *blockData ){
-//
-//   byte DFblockReg[32];
-//
-//   Wire.beginTransmission( devAddress );
-//   Wire.send( 0x44 );
-//   Wire.send( 0x02 );
-//   Wire.send( regAddress2 );
-//   Wire.send( regAddress1 );
-//   Wire.send( regAddress1 );
-//   Wire.endTransmission();
-//
-//   delay(5);
-//
-//   if( readBlockReg( BQ4050addr, 0x44, DFblockReg ) ){
-//     for( int i = 0; i < 32; i++ ){
-//       blockData[i] = DFblockReg[i];
-//     }
-//     return true;
-//   }else{
-//     return false;
-//   }
-//
-// }
-
-void Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize ){
+boolean Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize ){
 
   //function that handles writing data to the flash on the BQ4050.
   //Data is between 1 and 4 bytes long
@@ -304,171 +203,90 @@ void Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte *da
   }
   //send CRC at the end
   Wire.send( PECcheck );
-  Wire.endTransmission();
-  delay(20);
+  byte ack = Wire.endTransmission();
+  if( ack == 0 ){
+    return true;
+  }else{
+    return false; //if I2C comm fails
+  }
 
 }
 
-// byte Lorro_BQ4050::readDFByteReg2( char devAddress, byte regAddress1, byte regAddress2 ){
-//
-//   byte dataByte = 0;
-// //   byte sentData[3] = { regAddress2, regAddress1 };
-// //
-// //   Wire2.i2c_start( B0010110 );
-// //   Wire2.i2c_write( 0x44 );
-// //   Wire2.i2c_write( sentData[0] );
-// //   Wire2.i2c_write( sentData[1] );
-// //   Serial.print("return status: ");
-// //   Wire2.i2c_stop();
-// // //  Serial.println(Wire.endTransmission());
-// //   delay(5);
-// //
-// //   Wire2.i2c_start( B0010111 );
-// // //  Wire2.i2c_write( 0x44 );
-// //   dataByte = Wire2.i2c_read(false);
-// //   Wire2.i2c_read(false);
-// //   Wire2.i2c_read(false);
-// //   Wire2.i2c_read(false);
-// //   Wire2.i2c_read(false);
-// //   Wire2.i2c_stop();
-// //  Wire.write( 0x00 );
-// //  if( Wire.available() > 0 ){
-// //    dataByte = Wire.receive();
-// //  }
-//
-//   return dataByte;
-// }
+boolean Lorro_BQ4050::writeCommand( char devAddress, byte regAddress ){
 
-// byte Lorro_BQ4050::readBlockReg( char devAddress, byte regAddress, byte *block ){
-//
-//   Wire.beginTransmission( devAddress );
-//   Wire.write( regAddress );
-//   byte ack = Wire.endTransmission();
-//   //successful ack will equal 0. Failed ack will be other number
-//
-//   if( ack == 0 ){
-//     Wire.requestFrom( devAddress , 32);
-//     if( Wire.available() > 0 ){
-//       for(int i = 0; i < 32; i++ ){
-//         block[i] = Wire.receive();
-//       }
-//     }
-//     return true;
-//   }else{
-//     //if no response from chip, write 0's to array
-//     for(int i = 0; i < 32; i++ ){
-//       block[i] = '0';
-//     }
-//     return false; //if I2C comm fails
-//   }
-//
-// }
+  //Function that simply sends out a command to the device byt way of writing a zero to a particular address
 
-// void Lorro_BQ4050::writeByteReg( byte devAddress, byte regAddress, byte dataByte ){
-//
-//   Wire.beginTransmission( devAddress );
-//   Wire.write( regAddress );
-//   Wire.write( dataByte );
-//   Wire.endTransmission();
-//
-// }
-//
-// void Lorro_BQ4050::write2ByteReg( byte devAddress, byte regAddress, byte dataByte1, byte dataByte2 ){
-//
-//   Wire.beginTransmission( devAddress );
-//   Wire.write( regAddress );
-//   Wire.write( dataByte1 );
-//   Wire.write( dataByte2 );
-//   Wire.endTransmission();
-//
-// }
-//
-// void Lorro_BQ4050::readMACblock( char devAddress, byte regAddress, byte *block ){
-//
-//     Wire.beginTransmission( devAddress );
-//     Wire.write( 0x44 ); //MAC access
-//     // Wire.write( 0x02 ); //for the following 2 bytes
-//     Wire.write( regAddress ); //little endian of address
-//     Wire.write( 0x00 );
-//     Wire.endTransmission();
-//
-//     // Wire.beginTransmission( devAddress );
-//     // Wire.write( 0x44 );
-//
-//     Wire.requestFrom( devAddress , 34);
-//     Wire.write( 0x44 );
-//     // Wire.write( 0x20 ); //write the number of bytes in the block (32)
-//     if( Wire.available() > 0 ){
-//       for(int i = 0; i < 32; i++ ){
-//         block[i] = Wire.receive();
-//       }
-//     }
-//     // return *block;
-// }
-
-
-void Lorro_BQ4050::writeCommand( char devAddress, byte regAddress ){
-
-    Wire.beginTransmission( devAddress );
-    Wire.write( 0x44 ); //MAC access
-    Wire.write( regAddress ); //little endian of address
-    Wire.write( 0x00 );
-    Wire.endTransmission();
+  Wire.beginTransmission( devAddress );
+  //MAC access
+  Wire.write( 0x44 );
+  //little endian of address
+  Wire.write( regAddress );
+  Wire.write( 0x00 );
+  byte ack = Wire.endTransmission();
+  if( ack == 0 ){
+    return true;
+  }else{
+    return false; //if I2C comm fails
+  }
 
 }
 
 byte crctable[256];
 boolean printResults = false;
 
-void Lorro_BQ4050::CalculateTable_CRC8()
-{
-    const byte generator = 0x07;
-    /* iterate over all byte values 0 - 255 */
-    for (int divident = 0; divident < 256; divident++){
-      byte currByte = (byte)divident;
-      /* calculate the CRC-8 value for current byte */
-      for (byte bit = 0; bit < 8; bit++){
-        if ((currByte & 0x80) != 0){
-          currByte <<= 1;
-          currByte ^= generator;
-        }
-        else{
-          currByte <<= 1;
-        }
+void Lorro_BQ4050::CalculateTable_CRC8(){
+
+//Function that generates byte array as a lookup table to quickly create a CRC8 for the PEC
+
+  const byte generator = 0x07;
+  /* iterate over all byte values 0 - 255 */
+  for (int divident = 0; divident < 256; divident++){
+    byte currByte = (byte)divident;
+    /* calculate the CRC-8 value for current byte */
+    for (byte bit = 0; bit < 8; bit++){
+      if ((currByte & 0x80) != 0){
+        currByte <<= 1;
+        currByte ^= generator;
       }
-      /* store CRC value in lookup table */
-      crctable[divident] = currByte;
-      if( printResults ){
-        if( divident % 16 == 0 && divident > 2 ){
-          Serial.println();
-        }
-        if( currByte < 16 ) Serial.print( "0" );
-        Serial.print( currByte, HEX );
-        Serial.print( "\t" );
+      else{
+        currByte <<= 1;
       }
     }
+    /* store CRC value in lookup table */
+    crctable[divident] = currByte;
     if( printResults ){
-      Serial.println();
+      if( divident % 16 == 0 && divident > 2 ){
+        Serial.println();
+      }
+      if( currByte < 16 ) Serial.print( "0" );
+      Serial.print( currByte, HEX );
+      Serial.print( "\t" );
     }
+  }
+  if( printResults ){
+    Serial.println();
+  }
 }
 
-byte Lorro_BQ4050::Compute_CRC8(byte *bytes, uint8_t byteLen)
-{
-    byte crc = 0;
-    for( int i = 0; i < byteLen; i++ ){
-        /* XOR-in next input byte */
-        byte data = (byte)(bytes[i] ^ crc);
-        /* get current CRC value = remainder */
-        crc = (byte)(crctable[data]);
-        if( printResults ){
-          Serial.print( "byte value: " );
-          Serial.print( bytes[i], HEX );
-          Serial.print( "\tlookup position: " );
-          Serial.print( data, HEX );
-          Serial.print( "\tlookup value: " );
-          Serial.println( crc, HEX );
-        }
-    }
+byte Lorro_BQ4050::Compute_CRC8(byte *bytes, uint8_t byteLen){
 
-    return crc;
+  //Function to check byte array to be sent out against lookup table to efficiently calculate PEC
+
+  byte crc = 0;
+  for( int i = 0; i < byteLen; i++ ){
+    /* XOR-in next input byte */
+    byte data = (byte)(bytes[i] ^ crc);
+    /* get current CRC value = remainder */
+    crc = (byte)(crctable[data]);
+    if( printResults ){
+      Serial.print( "byte value: " );
+      Serial.print( bytes[i], HEX );
+      Serial.print( "\tlookup position: " );
+      Serial.print( data, HEX );
+      Serial.print( "\tlookup value: " );
+      Serial.println( crc, HEX );
+    }
+  }
+
+  return crc;
 }
