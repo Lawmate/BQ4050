@@ -5,10 +5,7 @@
 
 
 	A library for interfacing with TI BQ4050 battery fuel gauge chip
-<<<<<<< HEAD
   Includes template function in header file
-=======
->>>>>>> 0d5a2f4cec653440d25c5352a538c83fedc97053
 
 
 */
@@ -51,10 +48,10 @@ class Lorro_BQ4050{
   boolean getAtRateTimeToFull( uint16_t *mins );
   boolean getAtRateTimeToEmpty( uint16_t *mins );
 	uint16_t getTemperature();
-	float getCellVoltage4();
-	float getCellVoltage3();
-	float getCellVoltage2();
-	float getCellVoltage1();
+	// float getCellVoltage4();
+	// float getCellVoltage3();
+	// float getCellVoltage2();
+	// float getCellVoltage1();
 	uint16_t getStateofCharge();
 	void getBatteryMode();
 	void setBatteryMode();
@@ -69,7 +66,6 @@ class Lorro_BQ4050{
   void FETtoggle();
   void deviceReset();
   template<typename T, typename S>
-<<<<<<< HEAD
   boolean writeFlash( const T& dataParam, const S datVal){
 
     //Function for writing to the data Flash register.
@@ -91,22 +87,11 @@ class Lorro_BQ4050{
     }else{
       return false;
     }
-=======
-  void writeFlash( const T& dataParam, const S datVal){
-
-    constexpr uint8_t byteLen = sizeof( datVal );
-    byte valBytes[ byteLen ];
-    for( int i = 0; i < byteLen; i++ ){
-      valBytes[ i ] = datVal >> ( i * 8 );
-    }
-    writeDFByteReg( BQ4050addr, dataParam.addr, valBytes, byteLen );
->>>>>>> 0d5a2f4cec653440d25c5352a538c83fedc97053
 
   }
   template<typename T, typename S>
   boolean writeReg( const T& dataParam, const S datVal){
 
-<<<<<<< HEAD
     //Function for writing to the data register.
     //The first variable to come in is the struct and the second is the data.
     //This could be the dataParam.val value or an arbitrary value of correct type.
@@ -121,13 +106,6 @@ class Lorro_BQ4050{
       valBytes[ i ] = datVal >> ( i * 8 );
     }
     //Run function to write bytes into the register.
-=======
-    constexpr uint8_t byteLen = sizeof( datVal );
-    byte valBytes[ byteLen ];
-    for( int i = 0; i < byteLen; i++ ){
-      valBytes[ i ] = datVal >> ( i * 8 );
-    }
->>>>>>> 0d5a2f4cec653440d25c5352a538c83fedc97053
     if( writeDataReg( BQ4050addr, ( byte )dataParam.addr, valBytes, byteLen ) ){
       return true;
     }else{
@@ -138,7 +116,6 @@ class Lorro_BQ4050{
   template<typename T>
   boolean readReg( T& dataParam ){
 
-<<<<<<< HEAD
     //This is a function for reading data words.
     //The number of bytes that make up a word is either 1 or 2.
 
@@ -151,12 +128,6 @@ class Lorro_BQ4050{
       //Cycle through array of data
       for( int i = 0; i < byteLen; i++ ){
         //Shift each byte in to the right, in steps of 8 bits. The resulting data is type cast, by getting the type with decltype
-=======
-    constexpr uint8_t byteLen = sizeof( dataParam.val );
-    byte valBytes[ byteLen ];
-    if( readDataReg( BQ4050addr, ( byte )dataParam.addr, valBytes, byteLen ) ){
-      for( int i = 0; i < byteLen; i++ ){
->>>>>>> 0d5a2f4cec653440d25c5352a538c83fedc97053
         dataParam.val = ( decltype( dataParam.val ) ) ( dataParam.val | ( valBytes[ i ] << ( 8 * i ) ) );
       }
       return true;
@@ -168,7 +139,6 @@ class Lorro_BQ4050{
   template<typename T>
   boolean readBlockReg( T& dataParam ){
 
-<<<<<<< HEAD
     //This is a function for reading data blocks.
     //Data blocks are returned with the first byte denoting how many data bytes are to follow
     //so ignore the value of the first byte as it is not data.
@@ -184,13 +154,6 @@ class Lorro_BQ4050{
       for( int i = 0; i < ( byteLen - 1 ); i++ ){
         //Skip over the first byte of the read array
         dataParam.val[ i ] = valBytes[ i + 1 ];
-=======
-    constexpr uint8_t byteLen = sizeof( dataParam.val );
-    byte valBytes[ byteLen ];
-    if( readDataReg( BQ4050addr, ( byte )dataParam.addr, valBytes, byteLen ) ){
-      for( int i = 0; i < byteLen; i++ ){
-        dataParam.val[ i ] = valBytes[ i ];
->>>>>>> 0d5a2f4cec653440d25c5352a538c83fedc97053
       }
       return true;
     }else{
@@ -354,19 +317,11 @@ class Lorro_BQ4050{
         uint8_t addr = 0x20;
       } manufacturerName;
       struct DeviceNamet{
-<<<<<<< HEAD
         byte val[ 7 ];
         uint8_t addr = 0x21;
       } deviceName;
       struct DeviceChemistryt{
         byte val[ 5 ];
-=======
-        byte val[ 8 ];
-        uint8_t addr = 0x21;
-      } deviceName;
-      struct DeviceChemistryt{
-        byte val[ 6 ];
->>>>>>> 0d5a2f4cec653440d25c5352a538c83fedc97053
         uint8_t addr = 0x22;
       } deviceChemistry;
       struct CellVoltage4t{
@@ -398,7 +353,6 @@ class Lorro_BQ4050{
         uint8_t addr = 0x4F;
       } stateOfHealth;
       struct SafetyAlertt{
-<<<<<<< HEAD
         byte val[ 5 ];
         uint8_t addr = 0x50;
       } safetyAlert;
@@ -466,43 +420,6 @@ class Lorro_BQ4050{
         byte val[ 14 ];
         uint8_t addr = 0x72;
       } dAStatust2;
-=======
-        uint64_t val = 0;
-        uint8_t addr = 0x50;
-      } safetyAlert;
-      struct SafetyStatust{
-        uint64_t val = 0;
-        uint8_t addr = 0x51;
-      } safetyStatus;
-      struct PFAlertt{
-        uint64_t val = 0;
-        uint8_t addr = 0x52;
-      } pFAlert;
-      struct PFStatust{
-        uint64_t val = 0;
-        uint8_t addr = 0x53;
-      } pFStatus;
-      struct OperationStatust{
-        uint64_t val = 0;
-        uint8_t addr = 0x54;
-      } operationStatus;
-      struct ChargingStatust{
-        uint64_t val = 0;
-        uint8_t addr = 0x55;
-      } chargingStatus;
-      struct GaugingStatust{
-        uint64_t val = 0;
-        uint8_t addr = 0x56;
-      } gaugingStatus;
-      struct ManufacturingStatust{
-        uint64_t val = 0;
-        uint8_t addr = 0x57;
-      } manufacturingStatus;
-      struct AFERegistert{
-        uint64_t val = 0;
-        uint8_t addr = 0x58;
-      } aFERegister;
->>>>>>> 0d5a2f4cec653440d25c5352a538c83fedc97053
     } ;
     struct DFt{
       struct Protectionst{
