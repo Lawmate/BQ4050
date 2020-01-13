@@ -38,26 +38,6 @@
 class Lorro_BQ4050{
  public:
 	Lorro_BQ4050( char addr );
-  void init();
- 	// Lorro_BQ4050(  );
-	void getDAConfiguration();
- 	uint16_t getVoltage( void );
-  boolean getCurrent( int16_t *currentVal );
-  boolean getAtRate( int16_t *currentVal );
-  boolean setAtRate( int16_t *currentVal );
-  boolean getAtRateTimeToFull( uint16_t *mins );
-  boolean getAtRateTimeToEmpty( uint16_t *mins );
-	uint16_t getTemperature();
-	// float getCellVoltage4();
-	// float getCellVoltage3();
-	// float getCellVoltage2();
-	// float getCellVoltage1();
-	uint16_t getStateofCharge();
-	void getBatteryMode();
-	void setBatteryMode();
-	void getManufacturerName();
-	void getDeviceChemistry();
-  boolean getOperationStatus(byte *opStatArr);
   boolean getXCHGstatus();
   boolean getXDSGstatus();
   boolean getPCHGstatus();
@@ -595,18 +575,9 @@ class Lorro_BQ4050{
     } ;
 
  private:
-	byte readByteReg( char devAddress, byte regAddress );
-	byte readDFByteReg( char devAddress, byte regAddress1, byte regAddress2 );
-  boolean readDFBlockReg( char devAddress, byte regAddress1, byte regAddress2, byte *blockData );
-  boolean writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize );
-	byte readDFByteReg2( char devAddress, byte regAddress1, byte regAddress2 );
-	uint16_t read2ByteReg( char devAddress, byte regAddress );
   boolean readDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen );
   boolean writeDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen );
-	byte readBlockReg( char devAddress, byte regAddress, byte *block );
-	void writeByteReg( byte devAddress, byte regAddress, byte dataByte );
-	void write2ByteReg( byte devAddress, byte regAddress, byte dataByte1, byte dataByte2 );
-  void readMACblock( char devAddress, byte regAddress, byte *block );
+  boolean writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize );
   boolean writeCommand( char devAddress, byte regAddress );
   void CalculateTable_CRC8();
   byte Compute_CRC8(byte *bytes, uint8_t byteLen);
