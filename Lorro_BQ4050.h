@@ -12,8 +12,12 @@
 
  #include "Arduino.h"
 
-
+#define AtRateReg                             0x04
+#define AtRateTimeToFullReg                   0x05
+#define AtRateTimetoEmptyReg                  0x06
+#define AtRateOKReg                           0x07
 #define VoltageReg 														0x08
+#define CurrentReg 														0x0A
 #define StateOfChargeReg  										0x0E
 #define DAStatus1reg  												0x71
 #define CellVoltageFour  											0x3C
@@ -30,14 +34,6 @@
 #define FETcontrol                            0x22
 #define deviceResetReg                        0x41
 
-#define DFProtectionsCUVThreshold
-
-// struct testStructt{
-//   int16_t val = 2850;
-//   uint16_t addr = 0x4481;
-// } testStruct;
-
-
 class Lorro_BQ4050{
  public:
 	Lorro_BQ4050( char addr );
@@ -45,6 +41,11 @@ class Lorro_BQ4050{
  	// Lorro_BQ4050(  );
 	void getDAConfiguration();
  	uint16_t getVoltage( void );
+  boolean getCurrent( int16_t *currentVal );
+  boolean getAtRate( int16_t *currentVal );
+  boolean setAtRate( int16_t *currentVal );
+  boolean getAtRateTimeToFull( uint16_t *mins );
+  boolean getAtRateTimeToEmpty( uint16_t *mins );
 	uint16_t getTemperature();
 	float getCellVoltage4();
 	float getCellVoltage3();
@@ -72,6 +73,51 @@ class Lorro_BQ4050{
       valBytes[ i ] = datVal >> ( i * 8 );
     }
     writeDFByteReg( BQ4050addr, dataParam.addr, valBytes, byteLen );
+
+  }
+  template<typename T, typename S>
+  boolean writeReg( const T& dataParam, const S datVal){
+
+    constexpr uint8_t byteLen = sizeof( datVal );
+    byte valBytes[ byteLen ];
+    for( int i = 0; i < byteLen; i++ ){
+      valBytes[ i ] = datVal >> ( i * 8 );
+    }
+    if( writeDataReg( BQ4050addr, ( byte )dataParam.addr, valBytes, byteLen ) ){
+      return true;
+    }else{
+      return false;
+    }
+
+  }
+  template<typename T>
+  boolean readReg( T& dataParam ){
+
+    constexpr uint8_t byteLen = sizeof( dataParam.val );
+    byte valBytes[ byteLen ];
+    if( readDataReg( BQ4050addr, ( byte )dataParam.addr, valBytes, byteLen ) ){
+      for( int i = 0; i < byteLen; i++ ){
+        dataParam.val = ( decltype( dataParam.val ) ) ( dataParam.val | ( valBytes[ i ] << ( 8 * i ) ) );
+      }
+      return true;
+    }else{
+      return false;
+    }
+
+  }
+  template<typename T>
+  boolean readBlockReg( T& dataParam ){
+
+    constexpr uint8_t byteLen = sizeof( dataParam.val );
+    byte valBytes[ byteLen ];
+    if( readDataReg( BQ4050addr, ( byte )dataParam.addr, valBytes, byteLen ) ){
+      for( int i = 0; i < byteLen; i++ ){
+        dataParam.val[ i ] = valBytes[ i ];
+      }
+      return true;
+    }else{
+      return false;
+    }
 
   }
   void writeThreshold( int16_t datVal );
@@ -112,7 +158,196 @@ class Lorro_BQ4050{
                                       "Charge FET status",
                                       "Discharge FET status",
                                       "System present low"};
-
+    struct Regt{
+      struct RemainingCapAlarmt{
+        uint16_t val = 300; //mAh
+        uint8_t addr = 0x01;
+      } remainingCapAlarm;
+      struct RemainingTimeAlarmt{
+        uint16_t val = 10; //min
+        uint8_t addr = 0x02;
+      } remainingTimeAlarm;
+      struct BatteryModet{
+        uint16_t val = 0;
+        uint8_t addr = 0x03;
+      } batteryMode;
+      struct AtRatet{
+        int16_t val = 0;
+        uint8_t addr = 0x04;
+      } atRate;
+      struct AtRateTimeToFullt{
+        uint16_t val = 0;
+        uint8_t addr = 0x05;
+      } atRateTimeToFull;
+      struct AtRateTimeToEmptyt{
+        uint16_t val = 0;
+        uint8_t addr = 0x06;
+      } atRateTimeToEmpty;
+      struct AtRateOKt{
+        uint16_t val = 0;
+        uint8_t addr = 0x07;
+      } atRateOK;
+      struct Temperaturet{
+        uint16_t val = 0;
+        uint8_t addr = 0x08;
+      } temperature;
+      struct Voltaget{
+        uint16_t val = 0;
+        uint8_t addr = 0x09;
+      } voltage;
+      struct Currentt{
+        int16_t val = 0;
+        uint8_t addr = 0x0A;
+      } current;
+      struct AverageCurrentt{
+        int16_t val = 0;
+        uint8_t addr = 0x0B;
+      } averageCurrent;
+      struct MaxErrort{
+        uint8_t val = 0;
+        uint8_t addr = 0x0C;
+      } maxError;
+      struct RelativeStateOfCharget{
+        uint8_t val = 0;
+        uint8_t addr = 0x0D;
+      } relativeStateOfCharge;
+      struct AbsoluteStateOfCharget{
+        uint8_t val = 0;
+        uint8_t addr = 0x0E;
+      } absoluteStateOfCharge;
+      struct RemainingCapacityt{
+        uint16_t val = 0;
+        uint8_t addr = 0x0F;
+      } remainingCapacity;
+      struct FullChargeCapacityt{
+        uint16_t val = 0;
+        uint8_t addr = 0x10;
+      } fullChargeCapacity;
+      struct RunTimeToEmptyt{
+        uint16_t val = 0;
+        uint8_t addr = 0x11;
+      } runTimeToEmpty;
+      struct AverageTimeToEmptyt{
+        uint16_t val = 0;
+        uint8_t addr = 0x12;
+      } averageTimeToEmpty;
+      struct AverageTimeToFullt{
+        uint16_t val = 0;
+        uint8_t addr = 0x13;
+      } averageTimeToFull;
+      struct ChargingCurrentt{
+        uint16_t val = 0;
+        uint8_t addr = 0x14;
+      } chargingCurrent;
+      struct ChargingVoltaget{
+        uint16_t val = 0;
+        uint8_t addr = 0x15;
+      } chargingVoltage;
+      struct BatteryStatust{
+        uint16_t val = 0;
+        uint8_t addr = 0x16;
+      } batteryStatus;
+      struct CycleCountt{
+        uint16_t val = 0;
+        uint8_t addr = 0x17;
+      } cycleCount;
+      struct DesignCapacityt{
+        uint16_t val = 0;
+        uint8_t addr = 0x18;
+      } designCapacity;
+      struct DesignVoltaget{
+        uint16_t val = 0;
+        uint8_t addr = 0x19;
+      } designVoltage;
+      struct Specificationt{
+        uint16_t val = 0;
+        uint8_t addr = 0x1A;
+      } specification;
+      struct ManufacturerDatat{
+        uint16_t val = 0;
+        uint8_t addr = 0x1B;
+      } manufacturerData;
+      struct SerialNumbert{
+        uint16_t val = 0;
+        uint8_t addr = 0x1C;
+      } serialNumber;
+      struct ManufacturerNamet{
+        byte val[ 18 ];
+        uint8_t addr = 0x20;
+      } manufacturerName;
+      struct DeviceNamet{
+        byte val[ 8 ];
+        uint8_t addr = 0x21;
+      } deviceName;
+      struct DeviceChemistryt{
+        byte val[ 6 ];
+        uint8_t addr = 0x22;
+      } deviceChemistry;
+      struct CellVoltage4t{
+        uint16_t val = 0;
+        uint8_t addr = 0x3C;
+      } cellVoltage4;
+      struct CellVoltage3t{
+        uint16_t val = 0;
+        uint8_t addr = 0x3D;
+      } cellVoltage3;
+      struct CellVoltage2t{
+        uint16_t val = 0;
+        uint8_t addr = 0x3E;
+      } cellVoltage2;
+      struct CellVoltage1t{
+        uint16_t val = 0;
+        uint8_t addr = 0x3F;
+      } cellVoltage1;
+      struct BTPDischargeSett{
+        uint16_t val = 0;
+        uint8_t addr = 0x4A;
+      } bTPDischargeSet;
+      struct BTPChargeSett{
+        uint16_t val = 0;
+        uint8_t addr = 0x4B;
+      } bTPChargeSet;
+      struct StateOfHealtht{
+        uint16_t val = 0;
+        uint8_t addr = 0x4F;
+      } stateOfHealth;
+      struct SafetyAlertt{
+        uint64_t val = 0;
+        uint8_t addr = 0x50;
+      } safetyAlert;
+      struct SafetyStatust{
+        uint64_t val = 0;
+        uint8_t addr = 0x51;
+      } safetyStatus;
+      struct PFAlertt{
+        uint64_t val = 0;
+        uint8_t addr = 0x52;
+      } pFAlert;
+      struct PFStatust{
+        uint64_t val = 0;
+        uint8_t addr = 0x53;
+      } pFStatus;
+      struct OperationStatust{
+        uint64_t val = 0;
+        uint8_t addr = 0x54;
+      } operationStatus;
+      struct ChargingStatust{
+        uint64_t val = 0;
+        uint8_t addr = 0x55;
+      } chargingStatus;
+      struct GaugingStatust{
+        uint64_t val = 0;
+        uint8_t addr = 0x56;
+      } gaugingStatus;
+      struct ManufacturingStatust{
+        uint64_t val = 0;
+        uint8_t addr = 0x57;
+      } manufacturingStatus;
+      struct AFERegistert{
+        uint64_t val = 0;
+        uint8_t addr = 0x58;
+      } aFERegister;
+    } ;
     struct DFt{
       struct Protectionst{
         struct CUVt{ //Cell undervoltage settings
@@ -286,26 +521,6 @@ class Lorro_BQ4050{
       } gasGauging;
     } ;
 
-// struct Flasht{
-//   struct Settingst{
-//     struct UnderVoltaget{
-      // struct Thresholdt{
-      //   int16_t val = 2850;
-      //   uint16_t addr = 0x4481;
-      // } Threshold;
-      // struct Delayt{
-      //   uint8_t val = 2;
-      //   uint16_t addr = 0x4483;
-      // } Delay;
-      // struct Recoveryt{
-      //   int16_t val = 2900;
-      //   uint16_t addr = 0x4484;
-      // } Recovery;
-//     } UnderVoltage;
-//   } Settings;
-// } Flash;
-
-
  private:
 	byte readByteReg( char devAddress, byte regAddress );
 	byte readDFByteReg( char devAddress, byte regAddress1, byte regAddress2 );
@@ -313,6 +528,8 @@ class Lorro_BQ4050{
   void writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize );
 	byte readDFByteReg2( char devAddress, byte regAddress1, byte regAddress2 );
 	uint16_t read2ByteReg( char devAddress, byte regAddress );
+  boolean readDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen );
+  boolean writeDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen );
 	byte readBlockReg( char devAddress, byte regAddress, byte *block );
 	void writeByteReg( byte devAddress, byte regAddress, byte dataByte );
 	void write2ByteReg( byte devAddress, byte regAddress, byte dataByte1, byte dataByte2 );

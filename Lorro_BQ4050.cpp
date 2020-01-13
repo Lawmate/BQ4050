@@ -17,6 +17,7 @@ Lorro_BQ4050::Lorro_BQ4050( char addr ){
 // Lorro_BQ4050::Lorro_BQ4050(  ){
   BQ4050addr = addr;
   Wire.begin();
+  CalculateTable_CRC8();
 
 }
 
@@ -302,6 +303,63 @@ uint16_t Lorro_BQ4050::read2ByteReg(char devAddress, byte regAddress){
 
 }
 
+boolean Lorro_BQ4050::readDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen ){
+
+  // const int16_t dataLen = sizeof( dataVal );
+  Wire.beginTransmission( devAddress );
+  Wire.write( regAddress );
+  byte ack = Wire.endTransmission();
+  // delay( 15 );
+  if( ack == 0 ){
+    Wire.requestFrom( devAddress , (int16_t) arrLen );
+    if( Wire.available() > 0 ){
+      for( uint8_t i = 0; i < arrLen; i++ ){
+        dataVal[i] = Wire.receive();
+      }
+    }
+    return true;
+  }else{
+    return false; //if I2C comm fails
+  }
+
+}
+
+boolean Lorro_BQ4050::writeDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen ){
+
+  // Serial.print( "size of incoming array: " );
+  // Serial.println( sizeof( dataVal ) );
+  // Serial.print( "size of array length value that is sent: " );
+  // Serial.println( arrLen );
+  // const int16_t dataLen = sizeof( dataVal );
+  // for( int i = 0; i < arrLen; i++ ){
+  //   Serial.print( dataVal[ i ] );
+  //   Serial.print( ", " );
+  // }
+  // Serial.println();
+  // Serial.println( dataLen );
+  byte byteArr[ 6 ] = { ( byte )( devAddress << 1 ), regAddress, 0, 0, 0, 0 };
+  Wire.beginTransmission( devAddress );
+  Wire.write( regAddress );
+  for( int i = 0; i < arrLen; i++ ){
+    byteArr[ i + 2 ] = dataVal [ i ];
+    Wire.write( dataVal[ i ] );
+  }
+  byte PECcheck = Compute_CRC8( byteArr, arrLen + 2 );
+  Wire.write( PECcheck );
+  // for( int i = 0; i < arrLen + 2; i++ ){
+  //   Serial.print( byteArr[i], HEX );
+  //   Serial.print( ", " );
+  // }
+  // Serial.println( PECcheck, HEX );
+  byte ack = Wire.endTransmission();
+  if( ack == 0 ){
+    return true;
+  }else{
+    return false; //if I2C comm fails
+  }
+
+}
+
 byte Lorro_BQ4050::readByteReg( char devAddress, byte regAddress ){
   byte dataByte = 0;
 
@@ -363,7 +421,10 @@ boolean Lorro_BQ4050::readDFBlockReg( char devAddress, byte regAddress1, byte re
 
 void Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize ){
 
-  //function that handles writing data to the flash on the BQ4050
+  //function that handles writing data to the flash on the BQ4050.
+  //Data is between 1 and 4 bytes long
+  //Addresses are 2 bytes long
+
   //For CRC calculation, the address needs to include the write bit, so shifts to the left
   byte addr = devAddress << 1;
   //This is a value that gets sent to the BQ4050 to let it know how many bytes are heading its way

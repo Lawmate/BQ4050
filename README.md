@@ -1,4 +1,11 @@
 # Lorro_BQ4050
+
+A library for interfacing with Texas Instruments BQ4050 fuel gauge chip.
+This chip has a comprehensive set of capabilities and many settings required
+to use it properly. You will need to refer to the TI TRM to get a description
+of all the different registers
+http://www.ti.com/lit/pdf/sluuaq3
+
 <!-- START COMPATIBILITY TABLE -->
 
 ## Compatibility
@@ -20,16 +27,6 @@ Intel Curie @ 32MHz|              |             |     X      |
 STM32F2            |              |             |     X      |
 Teensy 3.2         |      X       |             |            |
 
-  * ATmega328 @ 16MHz : Arduino UNO, Adafruit Pro Trinket 5V, Adafruit Metro 328, Adafruit Metro Mini
-  * ATmega328 @ 12MHz : Adafruit Pro Trinket 3V
-  * ATmega32u4 @ 16MHz : Arduino Leonardo, Arduino Micro, Arduino Yun, Teensy 2.0
-  * ATmega32u4 @ 8MHz : Adafruit Flora, Bluefruit Micro
-  * ESP8266 : Adafruit Huzzah
-  * ESP32 : WROOM
-  * ATmega2560 @ 16MHz : Arduino Mega
-  * ATSAM3X8E : Arduino Due
-  * ATSAM21D : Arduino Zero, M0 Pro
-  * ATtiny85 @ 16MHz : Adafruit Trinket 5V
-  * ATtiny85 @ 8MHz : Adafruit Gemma, Arduino Gemma, Adafruit Trinket 3V
+
 
 <!-- END COMPATIBILITY TABLE -->
