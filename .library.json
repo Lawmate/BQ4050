@@ -1,0 +1,52 @@
+{
+    "name": "Lorro BQ4050",
+    "version": "0.1",
+    "keywords": [
+        "communication"
+    ],
+    "description": "Arduino library for BQ4050 battery fuel gauge, using SMBUS communication which is based on I2C",
+    "frameworks": [
+        "arduino"
+    ],
+    "platforms": [
+        "atmelavr",
+        "atmelsam",
+        "espressif32",
+        "espressif8266",
+        "infineonxmc",
+        "intel_arc32",
+        "kendryte210",
+        "microchippic32",
+        "nordicnrf51",
+        "nordicnrf52",
+        "ststm32",
+        "ststm8",
+        "teensy",
+        "timsp430"
+    ],
+    "authors": [
+        {
+            "email": null,
+            "url": null,
+            "maintainer": true,
+            "name": "Lorro"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Lawmate/BQ4050"
+    },
+    "homepage": null,
+    "export": {
+        "include": null,
+        "exclude": [
+            "extras",
+            "docs",
+            "tests",
+            "test",
+            "*.doxyfile",
+            "*.pdf"
+        ]
+    },
+    "id": 199
+}
