@@ -406,7 +406,7 @@ class Lorro_BQ4050{
       struct Settingst{
         struct Configurationt{
           struct DAConfigurationt{
-            byte val = 0x13;
+            byte val = 0x12;
             uint16_t addr = 0x457B;
           } dAConfiguration;
         } configuration;

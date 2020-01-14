@@ -27,16 +27,16 @@ Lorro_BQ4050::Lorro_BQ4050( char addr ){
 }
 
 //Create instances of structs for use across the functions
-Lorro_BQ4050::DFt DF;
-Lorro_BQ4050::Regt reg;
+Lorro_BQ4050::DFt dataFlash;
+Lorro_BQ4050::Regt registers;
 
 //Prints a binary number with leading zeros (Automatic Handling)
 //Useful for debugging
 #define PRINTBIN(Num) for (uint64_t t = (1ULL<< ((sizeof(Num)*8)-1)); t; t >>= 1) Serial.write(Num  & t ? '1' : '0');
 
 boolean Lorro_BQ4050::getXCHGstatus(){
-  if( readBlockReg( reg.operationStatus ) ){
-    if( ( ( reg.operationStatus.val[ 2 ] & 0x40 ) >> 6 ) == 1 ){ //AND the bit with the byte then shift it right
+  if( readBlockReg( registers.operationStatus ) ){
+    if( ( ( registers.operationStatus.val[ 2 ] & 0x40 ) >> 6 ) == 1 ){ //AND the bit with the byte then shift it right
       Serial.println("Charging is disabled \t(XCHG high)");
     }else{
       Serial.println("Charging is not disabled \t(XCHG low)");
@@ -51,8 +51,8 @@ boolean Lorro_BQ4050::getXDSGstatus(){
 
 //Function to read the register and extract the status bit for human reading
 
-  if( readBlockReg( reg.operationStatus ) ){
-    if( ( ( reg.operationStatus.val[2] & 0x20 ) >> 5 ) == 1 ){ //AND the bit with the byte then shift it right
+  if( readBlockReg( registers.operationStatus ) ){
+    if( ( ( registers.operationStatus.val[2] & 0x20 ) >> 5 ) == 1 ){ //AND the bit with the byte then shift it right
       Serial.println("Discharging is disabled \t(XDSG high)");
     }else{
       Serial.println("Discharging is not disabled \t(XDSG low)");
@@ -64,8 +64,8 @@ boolean Lorro_BQ4050::getXDSGstatus(){
 }
 
 boolean Lorro_BQ4050::getPCHGstatus(){
-  if( readBlockReg( reg.operationStatus ) ){
-    if( ( ( reg.operationStatus.val[1] & 0x08 ) >> 3 ) == 1 ){ //AND the bit with the byte then shift it right
+  if( readBlockReg( registers.operationStatus ) ){
+    if( ( ( registers.operationStatus.val[1] & 0x08 ) >> 3 ) == 1 ){ //AND the bit with the byte then shift it right
       Serial.println("Pre-charge FET is enabled (on) \t(PCHG high)");
     }else{
       Serial.println("Pre-charge FET is disabled (off) \t(PCHG low)");
@@ -77,8 +77,8 @@ boolean Lorro_BQ4050::getPCHGstatus(){
 }
 
 boolean Lorro_BQ4050::getCHGstatus(){
-  if( readBlockReg( reg.operationStatus ) ){
-    if( ( ( reg.operationStatus.val[1] & 0x04 ) >> 2 ) == 1 ){ //AND the bit with the byte then shift it right
+  if( readBlockReg( registers.operationStatus ) ){
+    if( ( ( registers.operationStatus.val[1] & 0x04 ) >> 2 ) == 1 ){ //AND the bit with the byte then shift it right
       Serial.println("Charging FET is enabled (on) \t(CHG high)");
     }else{
       Serial.println("Charging FET is disabled (off) \t(CHG low)");
@@ -90,8 +90,8 @@ boolean Lorro_BQ4050::getCHGstatus(){
 }
 
 boolean Lorro_BQ4050::getDSGstatus(){
-  if( readBlockReg( reg.operationStatus ) ){
-    if( ( ( reg.operationStatus.val[1] & 0x02 ) >> 1 ) == 1 ){ //AND the bit with the byte then shift it right
+  if( readBlockReg( registers.operationStatus ) ){
+    if( ( ( registers.operationStatus.val[1] & 0x02 ) >> 1 ) == 1 ){ //AND the bit with the byte then shift it right
       Serial.println("Discharging FET is enabled (on) \t(DSG high)");
     }else{
       Serial.println("Discharging FET is disabled (off) \t(DSG low)");
@@ -108,12 +108,12 @@ boolean Lorro_BQ4050::numberOfCells( uint8_t cellNum ){
   //Reduce cell number value, so it starts from zero
   cellNum = cellNum - 1;
   //Mask off the end 2 bits by ANDing the byte with all ones apart from the end 2 bits
-  DF.settings.configuration.dAConfiguration.val = ( DF.settings.configuration.dAConfiguration.val & 0xFC );
+  dataFlash.settings.configuration.dAConfiguration.val = ( dataFlash.settings.configuration.dAConfiguration.val & 0xFC );
   //Load the new data in by ORing the masked off value with the data value.
-  DF.settings.configuration.dAConfiguration.val = ( DF.settings.configuration.dAConfiguration.val | cellNum );
+  dataFlash.settings.configuration.dAConfiguration.val = ( dataFlash.settings.configuration.dAConfiguration.val | cellNum );
   //Use the writeFlash function to write the new number of cells value
-  Serial.print( "DA config byte: " );
-  Serial.println( DF.settings.configuration.dAConfiguration.val, HEX );
+  Serial.print( "DA config byte from cpp: " );
+  Serial.println( dataFlash.settings.configuration.dAConfiguration.val, HEX );
   // writeFlash( DF.settings.configuration.dAConfiguration, DF.settings.configuration.dAConfiguration.val );
   return true;
 }
