@@ -5,6 +5,9 @@ This chip has a comprehensive set of capabilities and many settings required
 to use it properly. You will need to refer to the TI TRM to get a description
 of all the different registers
 http://www.ti.com/lit/pdf/sluuaq3
+This library enables easy reading of the registers and reading and writing of
+the flash registers. The data is organised into a data structure similar to that
+outlined in the TRM and for each entry includes the value, address and data type.
 
 <!-- START COMPATIBILITY TABLE -->
 
