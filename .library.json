@@ -1,6 +1,6 @@
 {
     "name": "Lorro BQ4050",
-    "version": "0.1",
+    "version": "0.2",
     "keywords": [
         "communication"
     ],
@@ -9,20 +9,7 @@
         "arduino"
     ],
     "platforms": [
-        "atmelavr",
-        "atmelsam",
-        "espressif32",
-        "espressif8266",
-        "infineonxmc",
-        "intel_arc32",
-        "kendryte210",
-        "microchippic32",
-        "nordicnrf51",
-        "nordicnrf52",
-        "ststm32",
-        "ststm8",
-        "teensy",
-        "timsp430"
+        "teensy"
     ],
     "authors": [
         {

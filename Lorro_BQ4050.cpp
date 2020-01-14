@@ -48,6 +48,9 @@ boolean Lorro_BQ4050::getXCHGstatus(){
 }
 
 boolean Lorro_BQ4050::getXDSGstatus(){
+
+//Function to read the register and extract the status bit for human reading
+
   if( readBlockReg( reg.operationStatus ) ){
     if( ( ( reg.operationStatus.val[2] & 0x20 ) >> 5 ) == 1 ){ //AND the bit with the byte then shift it right
       Serial.println("Discharging is disabled \t(XDSG high)");
