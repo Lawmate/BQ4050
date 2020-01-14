@@ -43,6 +43,7 @@ class Lorro_BQ4050{
   boolean getPCHGstatus();
   boolean getCHGstatus();
   boolean getDSGstatus();
+  boolean numberOfCells( uint8_t cellNum );
   void FETtoggle();
   void deviceReset();
   template<typename T, typename S>
@@ -402,6 +403,14 @@ class Lorro_BQ4050{
       } dAStatust2;
     } ;
     struct DFt{
+      struct Settingst{
+        struct Configurationt{
+          struct DAConfigurationt{
+            byte val = 0x13;
+            uint16_t addr = 0x457B;
+          } dAConfiguration;
+        } configuration;
+      } settings;
       struct Protectionst{
         struct CUVt{ //Cell undervoltage settings
           struct Thresholdt{

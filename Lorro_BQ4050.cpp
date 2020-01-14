@@ -30,7 +30,8 @@ Lorro_BQ4050::Lorro_BQ4050( char addr ){
 Lorro_BQ4050::DFt DF;
 Lorro_BQ4050::Regt reg;
 
-// Prints a binary number with leading zeros (Automatic Handling)
+//Prints a binary number with leading zeros (Automatic Handling)
+//Useful for debugging
 #define PRINTBIN(Num) for (uint64_t t = (1ULL<< ((sizeof(Num)*8)-1)); t; t >>= 1) Serial.write(Num  & t ? '1' : '0');
 
 boolean Lorro_BQ4050::getXCHGstatus(){
@@ -96,6 +97,22 @@ boolean Lorro_BQ4050::getDSGstatus(){
   }else{
     return false;
   }
+}
+
+boolean Lorro_BQ4050::numberOfCells( uint8_t cellNum ){
+  //Catch to make sure no values too high pass
+  if( cellNum > 4 ) cellNum = 4;
+  //Reduce cell number value, so it starts from zero
+  cellNum = cellNum - 1;
+  //Mask off the end 2 bits by ANDing the byte with all ones apart from the end 2 bits
+  DF.settings.configuration.dAConfiguration.val = ( DF.settings.configuration.dAConfiguration.val & 0xFC );
+  //Load the new data in by ORing the masked off value with the data value.
+  DF.settings.configuration.dAConfiguration.val = ( DF.settings.configuration.dAConfiguration.val | cellNum );
+  //Use the writeFlash function to write the new number of cells value
+  Serial.print( "DA config byte: " );
+  Serial.println( DF.settings.configuration.dAConfiguration.val, HEX );
+  // writeFlash( DF.settings.configuration.dAConfiguration, DF.settings.configuration.dAConfiguration.val );
+  return true;
 }
 
 void Lorro_BQ4050::FETtoggle(){
