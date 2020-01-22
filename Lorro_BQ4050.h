@@ -409,6 +409,10 @@ class Lorro_BQ4050{
             byte val = 0x12;
             uint16_t addr = 0x457B;
           } dAConfiguration;
+          struct CEDVGaugingConfigurationt{
+            uint16_t val = 0x0208;
+            uint16_t addr = 0x458E;
+          } cEDVGaugingConfiguration;
         } configuration;
       } settings;
       struct Protectionst{
@@ -552,23 +556,23 @@ class Lorro_BQ4050{
         } state;
         struct CEDVcfgt{
           struct EMFt{
-            uint16_t val = 3743;
+            uint16_t val = 3515;
             uint16_t addr = 0x4590;
           } EMF;
           struct C0t{
-            uint16_t val = 149;
+            uint16_t val = 115;
             uint16_t addr = 0x4592;
           } C0;
           struct R0t{
-            uint16_t val = 867;
+            uint16_t val = 1;
             uint16_t addr = 0x4594;
           } R0;
           struct T0t{
-            uint16_t val = 4030;
+            uint16_t val = 37941;
             uint16_t addr = 0x4596;
           } T0;
           struct R1t{
-            uint16_t val = 316;
+            uint16_t val = 618;
             uint16_t addr = 0x4598;
           } R1;
           struct TCt{
