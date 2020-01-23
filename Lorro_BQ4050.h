@@ -414,14 +414,20 @@ class Lorro_BQ4050{
             uint16_t addr = 0x4455;
           } sOCFlagConfigA;
           struct SOCFlagConfigB{
-            uint16_t val = 0x8C;
+            uint8_t val = 0x8C;
             uint16_t addr = 0x4457;
           } sOCFlagConfigB;
-          struct CEDVGaugingConfigurationt{
-            uint16_t val = 0x0208;
-            uint16_t addr = 0x458E;
-          } cEDVGaugingConfiguration;
+          // struct CEDVGaugingConfigurationt{
+          //   uint16_t val = 0x0208;
+          //   uint16_t addr = 0x458E;
+          // } cEDVGaugingConfiguration;
         } configuration;
+        struct Manufacturingt{
+          struct MfgStatusInitt{
+            uint16_t val = 0x0218;
+            uint16_t addr = 0x4340;
+          } mfgStatusInit;
+        } manufacturing;
       } settings;
       struct Protectionst{
         struct CUVt{ //Cell undervoltage settings
