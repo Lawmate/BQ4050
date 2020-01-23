@@ -409,6 +409,14 @@ class Lorro_BQ4050{
             byte val = 0x12;
             uint16_t addr = 0x457B;
           } dAConfiguration;
+          struct SOCFlagConfigA{
+            uint16_t val = 0x0C8C;
+            uint16_t addr = 0x4455;
+          } sOCFlagConfigA;
+          struct SOCFlagConfigB{
+            uint16_t val = 0x8C;
+            uint16_t addr = 0x4457;
+          } sOCFlagConfigB;
           struct CEDVGaugingConfigurationt{
             uint16_t val = 0x0208;
             uint16_t addr = 0x458E;
