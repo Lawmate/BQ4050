@@ -417,10 +417,10 @@ class Lorro_BQ4050{
             uint8_t val = 0x8C;
             uint16_t addr = 0x4457;
           } sOCFlagConfigB;
-          // struct CEDVGaugingConfigurationt{
-          //   uint16_t val = 0x0208;
-          //   uint16_t addr = 0x458E;
-          // } cEDVGaugingConfiguration;
+          struct CEDVGaugingConfigurationt{
+            uint16_t val = 0x0208;
+            uint16_t addr = 0x458E;
+          } cEDVGaugingConfiguration;
         } configuration;
         struct Manufacturingt{
           struct MfgStatusInitt{
@@ -543,6 +543,80 @@ class Lorro_BQ4050{
           } delay;
         } OCD;
       } protections;
+      struct AdvancedChargeAlgorithmt{
+        struct LowTempChargingt{
+          struct Voltaget{
+            int16_t val = 4000; //milliVolts
+            uint16_t addr = 0x453C;
+          } voltage;
+          struct CurrentLowt{
+            int16_t val = 80; //milliAmps
+            uint16_t addr = 0x453E;
+          } currentLow;
+          struct CurrentMedt{
+            int16_t val = 400; //milliAmps
+            uint16_t addr = 0x4540;
+          } currentMed;
+          struct CurrentHight{
+            int16_t val = 800; //milliAmps
+            uint16_t addr = 0x4542;
+          } currentHigh;
+        } lowTempCharging;
+        struct StandardTempChargingt{
+          struct Voltaget{
+            int16_t val = 4150; //milliVolts
+            uint16_t addr = 0x4544;
+          } voltage;
+          struct CurrentLowt{
+            int16_t val = 100; //milliAmps
+            uint16_t addr = 0x4546;
+          } currentLow;
+          struct CurrentMedt{
+            int16_t val = 500; //milliAmps
+            uint16_t addr = 0x4548;
+          } currentMed;
+          struct CurrentHight{
+            int16_t val = 1000; //milliAmps
+            uint16_t addr = 0x454A;
+          } currentHigh;
+        } standardTempCharging;
+        struct HighTempChargingt{
+          struct Voltaget{
+            int16_t val = 4000; //milliVolts
+            uint16_t addr = 0x454C;
+          } voltage;
+          struct CurrentLowt{
+            int16_t val = 80; //milliAmps
+            uint16_t addr = 0x454E;
+          } currentLow;
+          struct CurrentMedt{
+            int16_t val = 400; //milliAmps
+            uint16_t addr = 0x4550;
+          } currentMed;
+          struct CurrentHight{
+            int16_t val = 800; //milliAmps
+            uint16_t addr = 0x4552;
+          } currentHigh;
+        } highTempCharging;
+        struct RecTempChargingt{
+          struct Voltaget{
+            int16_t val = 4150; //milliVolts
+            uint16_t addr = 0x4554;
+          } voltage;
+          struct CurrentLowt{
+            int16_t val = 100; //milliAmps
+            uint16_t addr = 0x4556;
+          } currentLow;
+          struct CurrentMedt{
+            int16_t val = 500; //milliAmps
+            uint16_t addr = 0x4558;
+          } currentMed;
+          struct CurrentHight{
+            int16_t val = 1000; //milliAmps
+            uint16_t addr = 0x455A;
+          } currentHigh;
+        } recTempCharging;
+      } advancedChargeAlgorithm;
       struct GasGaugingt{
         struct Designt{
           struct DesignCapacitymAht{
