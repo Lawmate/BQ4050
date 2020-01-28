@@ -620,11 +620,11 @@ class Lorro_BQ4050{
       struct GasGaugingt{
         struct Designt{
           struct DesignCapacitymAht{
-            int16_t val = 2600; //milliAmp hours
+            int16_t val = 2000; //milliAmp hours
             uint16_t addr = 0x444D;
           } designCapacitymAh;
           struct DesignCapacitymWht{
-            int16_t val = 3848; //milliWatt hours
+            int16_t val = 2960; //milliWatt hours
             uint16_t addr = 0x444F;
           } designCapacitymWh;
           struct DesignVoltaget{
