@@ -404,6 +404,12 @@ class Lorro_BQ4050{
     } ;
     struct DFt{
       struct Settingst{
+        struct Protectiont{
+          struct ProtectionConfigurationt{
+            uint8_t val = 0x02;
+            uint16_t addr = 0x447C;
+          } protectionConfiguration;
+        } protection;
         struct Configurationt{
           struct DAConfigurationt{
             byte val = 0x12;
