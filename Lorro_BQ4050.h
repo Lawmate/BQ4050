@@ -412,7 +412,7 @@ class Lorro_BQ4050{
         } protection;
         struct Configurationt{
           struct DAConfigurationt{
-            byte val = 0x12;
+            byte val = 0x12; //includes number of cells
             uint16_t addr = 0x457B;
           } dAConfiguration;
           struct SOCFlagConfigA{
