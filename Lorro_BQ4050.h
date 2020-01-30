@@ -64,6 +64,8 @@ class Lorro_BQ4050{
     }
     //Run function to write bytes into the register.
     if( writeDFByteReg( BQ4050addr, dataParam.addr, valBytes, byteLen ) ){
+      //delay to allow for the BQ4050 to process the newly flashed registers
+      delay( 15 );
       return true;
     }else{
       return false;
@@ -544,10 +546,24 @@ class Lorro_BQ4050{
             uint16_t addr = 0x44A6;
           } threshold ;
           struct Delayt{
-            uint8_t val = 5; //seconds
+            int16_t val = 5; //seconds
             uint16_t addr = 0x44A8;
           } delay;
         } OCD;
+        struct OCt{
+          struct Thresholdt{
+            int16_t val = 2000; //mAh
+            uint16_t addr = 0x44DF;
+          } threshold;
+          struct Recoveryt{
+            uint8_t val = 2; //mAh
+            uint16_t addr = 0x44E1;
+          } recovery;
+          struct RSOCRecoveryt{
+            uint8_t val = 90; //%
+            uint16_t addr = 0x44E3;
+          } rSOCRecovery;
+        } OC;
       } protections;
       struct AdvancedChargeAlgorithmt{
         struct LowTempChargingt{
