@@ -36,10 +36,11 @@ Lorro_BQ4050::Regt registers;
 
 boolean Lorro_BQ4050::getXCHGstatus(){
   if( readBlockReg( registers.operationStatus ) ){
-    if( ( ( registers.operationStatus.val[ 2 ] & 0x40 ) >> 6 ) == 1 ){ //AND the bit with the byte then shift it right
-      Serial.println("Charging is disabled \t(XCHG high)");
+    //AND the bit with the byte then shift it right
+    if( ( ( registers.operationStatus.val[ 1 ] & 0x40 ) >> 6 ) == 1 ){
+      Serial.println("Charging is disabled \t\t\t(XCHG high)");
     }else{
-      Serial.println("Charging is not disabled \t(XCHG low)");
+      Serial.println("Charging is not disabled \t\t(XCHG low)");
     }
     return true; //return if the bit read has been successful
   }else{
@@ -52,10 +53,11 @@ boolean Lorro_BQ4050::getXDSGstatus(){
 //Function to read the register and extract the status bit for human reading
 
   if( readBlockReg( registers.operationStatus ) ){
-    if( ( ( registers.operationStatus.val[2] & 0x20 ) >> 5 ) == 1 ){ //AND the bit with the byte then shift it right
+    //AND the bit with the byte then shift it right
+    if( ( ( registers.operationStatus.val[ 1 ] & 0x20 ) >> 5 ) == 1 ){
       Serial.println("Discharging is disabled \t(XDSG high)");
     }else{
-      Serial.println("Discharging is not disabled \t(XDSG low)");
+      Serial.println("Discharging is not disabled \t\t(XDSG low)");
     }
     return true; //return if the bit read has been successful
   }else{
@@ -65,8 +67,9 @@ boolean Lorro_BQ4050::getXDSGstatus(){
 
 boolean Lorro_BQ4050::getPCHGstatus(){
   if( readBlockReg( registers.operationStatus ) ){
-    if( ( ( registers.operationStatus.val[1] & 0x08 ) >> 3 ) == 1 ){ //AND the bit with the byte then shift it right
-      Serial.println("Pre-charge FET is enabled (on) \t(PCHG high)");
+    //AND the bit with the byte then shift it right
+    if( ( ( registers.operationStatus.val[ 0 ] & 0x08 ) >> 3 ) == 1 ){
+      Serial.println("Pre-charge FET is enabled (on) \t\t(PCHG high)");
     }else{
       Serial.println("Pre-charge FET is disabled (off) \t(PCHG low)");
     }
@@ -78,10 +81,11 @@ boolean Lorro_BQ4050::getPCHGstatus(){
 
 boolean Lorro_BQ4050::getCHGstatus(){
   if( readBlockReg( registers.operationStatus ) ){
-    if( ( ( registers.operationStatus.val[1] & 0x04 ) >> 2 ) == 1 ){ //AND the bit with the byte then shift it right
-      Serial.println("Charging FET is enabled (on) \t(CHG high)");
+    //AND the bit with the byte then shift it right
+    if( ( ( registers.operationStatus.val[ 0 ] & 0x04 ) >> 2 ) == 1 ){
+      Serial.println("Charging FET is enabled (on) \t\t(CHG high)");
     }else{
-      Serial.println("Charging FET is disabled (off) \t(CHG low)");
+      Serial.println("Charging FET is disabled (off) \t\t(CHG low)");
     }
     return true; //return if the bit read has been successful
   }else{
@@ -91,10 +95,25 @@ boolean Lorro_BQ4050::getCHGstatus(){
 
 boolean Lorro_BQ4050::getDSGstatus(){
   if( readBlockReg( registers.operationStatus ) ){
-    if( ( ( registers.operationStatus.val[1] & 0x02 ) >> 1 ) == 1 ){ //AND the bit with the byte then shift it right
+    //AND the bit with the byte then shift it right
+    if( ( ( registers.operationStatus.val[ 0 ] & 0x02 ) >> 1 ) == 1 ){
       Serial.println("Discharging FET is enabled (on) \t(DSG high)");
     }else{
       Serial.println("Discharging FET is disabled (off) \t(DSG low)");
+    }
+    return true; //return if the bit read has been successful
+  }else{
+    return false;
+  }
+}
+
+boolean Lorro_BQ4050::getCellBalancingStatus(){
+  if( readBlockReg( registers.gaugingStatus ) ){
+    //AND the bit with the byte then shift it right
+    if( ( ( registers.gaugingStatus.val[ 0 ] & 0x10 ) >> 4 ) == 1 ){
+      Serial.println("Cell balancing is enabled (on) \t\t(BAL_EN high)");
+    }else{
+      Serial.println("Cell balancing is disabled (off) \t(BAL_EN low)");
     }
     return true; //return if the bit read has been successful
   }else{
@@ -108,9 +127,11 @@ boolean Lorro_BQ4050::numberOfCells( uint8_t cellNum ){
   //Reduce cell number value, so it starts from zero
   cellNum = cellNum - 1;
   //Mask off the end 2 bits by ANDing the byte with all ones apart from the end 2 bits
-  dataFlash.settings.configuration.dAConfiguration.val = ( dataFlash.settings.configuration.dAConfiguration.val & 0xFC );
+  dataFlash.settings.configuration.dAConfiguration.val = \
+  ( dataFlash.settings.configuration.dAConfiguration.val & 0xFC );
   //Load the new data in by ORing the masked off value with the data value.
-  dataFlash.settings.configuration.dAConfiguration.val = ( dataFlash.settings.configuration.dAConfiguration.val | cellNum );
+  dataFlash.settings.configuration.dAConfiguration.val = \
+  ( dataFlash.settings.configuration.dAConfiguration.val | cellNum );
   //Use the writeFlash function to write the new number of cells value
   Serial.print( "DA config byte from cpp: " );
   Serial.println( dataFlash.settings.configuration.dAConfiguration.val, HEX );
@@ -234,7 +255,8 @@ boolean Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte 
 
 boolean Lorro_BQ4050::writeCommand( char devAddress, byte regAddress ){
 
-  //Function that simply sends out a command to the device byt way of writing a zero to a particular address
+  //Function that simply sends out a command to the device byt way of writing
+  //a zero to a particular address
 
   Wire.beginTransmission( devAddress );
   //MAC access

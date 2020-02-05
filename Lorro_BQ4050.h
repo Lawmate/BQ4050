@@ -43,6 +43,7 @@ class Lorro_BQ4050{
   boolean getPCHGstatus();
   boolean getCHGstatus();
   boolean getDSGstatus();
+  boolean getCellBalancingStatus();
   boolean numberOfCells( uint8_t cellNum );
   void FETtoggle();
   void deviceReset();
@@ -110,7 +111,8 @@ class Lorro_BQ4050{
     if( readDataReg( BQ4050addr, ( byte )dataParam.addr, valBytes, byteLen ) ){
       //Cycle through array of data
       for( int i = 0; i < byteLen; i++ ){
-        //Shift each byte in to the right, in steps of 8 bits. The resulting data is type cast, by getting the type with decltype
+        //Shift each byte in to the right, in steps of 8 bits. The resulting
+        //data is type cast, by getting the type with decltype
         dataParam.val = ( decltype( dataParam.val ) ) ( dataParam.val | ( valBytes[ i ] << ( 8 * i ) ) );
       }
       return true;
