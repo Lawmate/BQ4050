@@ -35,9 +35,19 @@
 #define FETcontrol                            0x22
 #define deviceResetReg                        0x41
 
+// char *operationStatusLabels[ 4 ][ 8 ] = { { "SLEEP", "XCHG", "XDSG", "PF", "SS", "SDV", "SEC1", "SEC0" },
+//                                           { "BTP_INT", "SMOOTH", "FUSE", "--", "PCHG", "CHG", "DSG", "PRES" },
+//                                           { "--", "--", "EMSHUT", "CB", "SLPCC", "SLPAD", "SMBLCAL", "INIT" },
+//                                           { "SLEEPM", "XL", "CAL_OFFSET", "CAL", "AUTOCALM", "AUTH", "LED", "SDM" } };
+
 class Lorro_BQ4050{
  public:
 	Lorro_BQ4050( char addr );
+  boolean getOperationStatus();
+  boolean getChargingStatus();
+  boolean getGaugingStatus();
+  boolean getSafetyStatus();
+  boolean getSafetyAlert();
   boolean getXCHGstatus();
   boolean getXDSGstatus();
   boolean getPCHGstatus();
@@ -340,10 +350,22 @@ class Lorro_BQ4050{
       struct SafetyAlertt{
         byte val[ 5 ];
         uint8_t addr = 0x50;
+        char label[ 4 ][ 8 ][ 11 ] = {
+          { "AOLDL", "--  ", "OCD2", "OCD1", "OCC2", "OCC1", "COV ", "CUV " },
+          { "--  ", "--  ", "OTD ", "OTC ", "ASCDL", "--  ", "ASCCL", "--  " },
+          { "CHGC", "OC  ", "CTOS", "--  ", "PTOS", "--  ", "--  ", "OTF " },
+          { "--  ", "--  ", "--  ", "--  ", "UTD ", "UTC ", "PCHGC", "CHGV" }
+        };
       } safetyAlert;
       struct SafetyStatust{
         byte val[ 5 ];
         uint8_t addr = 0x51;
+        char label[ 4 ][ 8 ][ 11 ] = {
+          { "AOLDL", "AOLD", "OCD2", "OCD1", "OCC2", "OCC1", "COV ", "CUV " },
+          { "--  ", "--  ", "OTD ", "OTC ", "ASCDL", "ASCD", "ASCCL", "ASCC" },
+          { "CHGC", "OC  ", "--  ", "CTO ", "--  ", "PTO ", "HWDF", "OTF " },
+          { "--  ", "--  ", "--  ", "--  ", "UTD ", "UTC ", "PCHGC", "CHGV" }
+        };
       } safetyStatus;
       struct PFAlertt{
         byte val[ 5 ];
@@ -356,14 +378,28 @@ class Lorro_BQ4050{
       struct OperationStatust{
         byte val[ 5 ];
         uint8_t addr = 0x54;
+        char label[ 4 ][ 8 ][ 11 ] = {
+          { "BTP_INT", "SMOOTH", "FUSE", "--  ", "PCHG", "CHG ", "DSG ", "PRES" },
+          { "SLEEP", "XCHG", "XDSG", "PF  ", "SS  ", "SDV ", "SEC1", "SEC0" },
+          { "SLEEPM", "XL  ", "CAL_OFFSET", "CAL ", "AUTOCALM", "AUTH", "LED ", "SDM " },
+          { "--  ", "--  ", "EMSHUT", "CB  ", "SLPCC", "SLPAD", "SMBLCAL", "INIT" }
+        };
       } operationStatus;
       struct ChargingStatust{
         byte val[ 5 ];
         uint8_t addr = 0x55;
+        char label[ 2 ][ 8 ][ 11 ] = {
+          { "VCT ", "MCHG", "SU  ", "IN  ", "HV  ", "MV  ", "LV  ", "PV  " },
+          { "TAPER", "--  ", "--  ", "--  ", "--  ", "CCC ", "CVR ", "CCR " }
+        };
       } chargingStatus;
       struct GaugingStatust{
         byte val[ 5 ];
         uint8_t addr = 0x56;
+        char label[ 2 ][ 8 ][ 11 ] = {
+          { "CF  ", "DSG ", "EDV ", "BAL_EN", "TC  ", "TD  ", "FC  ", "FD  " },
+          { "VDQ ", "EDV2", "EDV1 ", "--  ", "--  ", "FCCX", "--  ", "--  " }
+        };
       } gaugingStatus;
       struct ManufacturingStatust{
         byte val[ 5 ];

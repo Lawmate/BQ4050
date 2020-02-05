@@ -34,6 +34,101 @@ Lorro_BQ4050::Regt registers;
 //Useful for debugging
 #define PRINTBIN(Num) for (uint64_t t = (1ULL<< ((sizeof(Num)*8)-1)); t; t >>= 1) Serial.write(Num  & t ? '1' : '0');
 
+boolean Lorro_BQ4050::getOperationStatus(){
+  if( readBlockReg( registers.operationStatus ) ){
+    Serial.println( "Operation status bits:" );
+    for( int i = 0; i < 4; i++ ){
+      for( int j = 0; j < 8; j++ ){
+        Serial.print( "(" );
+        Serial.print( ( registers.operationStatus.val[ i ] & ( 0x01 << ( 7 - j ) ) ) >> ( 7 - j ) );
+        Serial.print( ") " );
+        Serial.print( registers.operationStatus.label[ i ][ j ] );
+        Serial.print( "\t" );
+      }
+      Serial.println();
+    }
+    return true; //return if the bit read has been successful
+  }else{
+    return false;
+  }
+}
+
+boolean Lorro_BQ4050::getChargingStatus(){
+  if( readBlockReg( registers.chargingStatus ) ){
+    Serial.println( "Charging status bits:" );
+    for( int i = 0; i < 2; i++ ){
+      for( int j = 0; j < 8; j++ ){
+        Serial.print( "(" );
+        Serial.print( ( registers.chargingStatus.val[ i ] & ( 0x01 << ( 7 - j ) ) ) >> ( 7 - j ) );
+        Serial.print( ") " );
+        Serial.print( registers.chargingStatus.label[ i ][ j ] );
+        Serial.print( "\t" );
+      }
+      Serial.println();
+    }
+    return true; //return if the bit read has been successful
+  }else{
+    return false;
+  }
+}
+
+boolean Lorro_BQ4050::getGaugingStatus(){
+  if( readBlockReg( registers.gaugingStatus ) ){
+    Serial.println( "Gauging status bits:" );
+    for( int i = 0; i < 2; i++ ){
+      for( int j = 0; j < 8; j++ ){
+        Serial.print( "(" );
+        Serial.print( ( registers.gaugingStatus.val[ i ] & ( 0x01 << ( 7 - j ) ) ) >> ( 7 - j ) );
+        Serial.print( ") " );
+        Serial.print( registers.gaugingStatus.label[ i ][ j ] );
+        Serial.print( "\t" );
+      }
+      Serial.println();
+    }
+    return true; //return if the bit read has been successful
+  }else{
+    return false;
+  }
+}
+
+boolean Lorro_BQ4050::getSafetyStatus(){
+  if( readBlockReg( registers.safetyStatus ) ){
+    Serial.println( "Safety status bits:" );
+    for( int i = 0; i < 4; i++ ){
+      for( int j = 0; j < 8; j++ ){
+        Serial.print( "(" );
+        Serial.print( ( registers.safetyStatus.val[ i ] & ( 0x01 << ( 7 - j ) ) ) >> ( 7 - j ) );
+        Serial.print( ") " );
+        Serial.print( registers.safetyStatus.label[ i ][ j ] );
+        Serial.print( "\t" );
+      }
+      Serial.println();
+    }
+    return true; //return if the bit read has been successful
+  }else{
+    return false;
+  }
+}
+
+boolean Lorro_BQ4050::getSafetyAlert(){
+  if( readBlockReg( registers.safetyAlert ) ){
+    Serial.println( "Safety alert bits:" );
+    for( int i = 0; i < 4; i++ ){
+      for( int j = 0; j < 8; j++ ){
+        Serial.print( "(" );
+        Serial.print( ( registers.safetyAlert.val[ i ] & ( 0x01 << ( 7 - j ) ) ) >> ( 7 - j ) );
+        Serial.print( ") " );
+        Serial.print( registers.safetyAlert.label[ i ][ j ] );
+        Serial.print( "\t" );
+      }
+      Serial.println();
+    }
+    return true; //return if the bit read has been successful
+  }else{
+    return false;
+  }
+}
+
 boolean Lorro_BQ4050::getXCHGstatus(){
   if( readBlockReg( registers.operationStatus ) ){
     //AND the bit with the byte then shift it right
