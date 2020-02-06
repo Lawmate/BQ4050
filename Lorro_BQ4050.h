@@ -56,7 +56,7 @@ class Lorro_BQ4050{
   boolean getCellBalancingStatus();
   boolean numberOfCells( uint8_t cellNum );
   void FETtoggle();
-  void deviceReset();
+  boolean deviceReset();
   template<typename T, typename S>
   boolean writeFlash( const T& dataParam, const S datVal){
 

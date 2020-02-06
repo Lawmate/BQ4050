@@ -238,8 +238,12 @@ void Lorro_BQ4050::FETtoggle(){
   writeCommand( BQ4050addr, FETcontrol );
 }
 
-void Lorro_BQ4050::deviceReset(){
-  writeCommand( BQ4050addr, deviceResetReg );
+boolean Lorro_BQ4050::deviceReset(){
+  if( writeCommand( BQ4050addr, deviceResetReg ) ){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 // I2C functions below here
