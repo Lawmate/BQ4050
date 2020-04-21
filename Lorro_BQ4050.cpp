@@ -354,7 +354,7 @@ boolean Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte 
 
 boolean Lorro_BQ4050::writeCommand( char devAddress, byte regAddress ){
 
-  //Function that simply sends out a command to the device byt way of writing
+  //Function that simply sends out a command to the device by way of writing
   //a zero to a particular address
 
   Wire.beginTransmission( devAddress );

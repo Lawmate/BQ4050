@@ -16,6 +16,7 @@ Lorro_BQ4050 BQ4050( BQ4050addr );
 //Instantiate the structs
 // Lorro_BQ4050::Regt regs;
 // Lorro_BQ4050::Regt registers;
+extern Lorro_BQ4050::Regt registers;
 
 uint32_t previousMillis;
 uint16_t loopInterval = 1000;
@@ -33,7 +34,7 @@ void loop() {
   if( currentMillis - previousMillis > loopInterval ){
     previousMillis = currentMillis;
 
-    Lorro_BQ4050::Regt registers;
+    // Lorro_BQ4050::Regt registers;
     BQ4050.readReg( registers.relativeStateOfCharge );
     Serial.print( "State of charge: " );
     Serial.print( registers.relativeStateOfCharge.val );
