@@ -14,8 +14,6 @@
 //Initialise the device and library
 Lorro_BQ4050 BQ4050( BQ4050addr );
 //Instantiate the structs
-// Lorro_BQ4050::Regt regs;
-// Lorro_BQ4050::Regt registers;
 extern Lorro_BQ4050::Regt registers;
 
 uint32_t previousMillis;
