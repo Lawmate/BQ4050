@@ -14,7 +14,8 @@
 //Initialise the device and library
 Lorro_BQ4050 BQ4050( BQ4050addr );
 //Instantiate the structs
-Lorro_BQ4050::Regt regs;
+// Lorro_BQ4050::Regt regs;
+// Lorro_BQ4050::Regt registers;
 
 uint32_t previousMillis;
 uint16_t loopInterval = 1000;
@@ -32,45 +33,46 @@ void loop() {
   if( currentMillis - previousMillis > loopInterval ){
     previousMillis = currentMillis;
 
-    BQ4050.readReg( regs.relativeStateOfCharge );
+    Lorro_BQ4050::Regt registers;
+    BQ4050.readReg( registers.relativeStateOfCharge );
     Serial.print( "State of charge: " );
-    Serial.print( regs.relativeStateOfCharge.val );
+    Serial.print( registers.relativeStateOfCharge.val );
     Serial.println( "%" );
     delay( 15 );
 
-    BQ4050.readReg( regs.voltage );
+    BQ4050.readReg( registers.voltage );
     Serial.print( "Pack voltage: " );
-    Serial.print( regs.voltage.val );
+    Serial.print( registers.voltage.val );
     Serial.println( "mV" );
     delay( 15 );
 
-    BQ4050.readReg( regs.cellVoltage1 );
+    BQ4050.readReg( registers.cellVoltage1 );
     Serial.print( "Cell voltage 1: " );
-    Serial.print( regs.cellVoltage1.val );
+    Serial.print( registers.cellVoltage1.val );
     Serial.println( "mV" );
     delay( 15 );
 
-    BQ4050.readReg( regs.cellVoltage2 );
+    BQ4050.readReg( registers.cellVoltage2 );
     Serial.print( "Cell voltage 2: " );
-    Serial.print( regs.cellVoltage2.val );
+    Serial.print( registers.cellVoltage2.val );
     Serial.println( "mV" );
     delay( 15 );
 
-    BQ4050.readReg( regs.cellVoltage3 );
+    BQ4050.readReg( registers.cellVoltage3 );
     Serial.print( "Cell voltage 3: " );
-    Serial.print( regs.cellVoltage3.val );
+    Serial.print( registers.cellVoltage3.val );
     Serial.println( "mV" );
     delay( 15 );
 
-    BQ4050.readReg( regs.cellVoltage4 );
+    BQ4050.readReg( registers.cellVoltage4 );
     Serial.print( "Cell voltage 4: " );
-    Serial.print( regs.cellVoltage4.val );
+    Serial.print( registers.cellVoltage4.val );
     Serial.println( "mV" );
     delay( 15 );
 
-    BQ4050.readReg( regs.current );
+    BQ4050.readReg( registers.current );
     Serial.print( "Current: " );
-    Serial.print( regs.current.val );
+    Serial.print( registers.current.val );
     Serial.println( "mA" );
     delay( 15 );
 
