@@ -19,7 +19,7 @@
 //Initialise the device and library
 Lorro_BQ4050 BQ4050( BQ4050addr );
 //Instantiate the structs
-Lorro_BQ4050::Regt registers;
+// Lorro_BQ4050::Regt registers;
 
 void setup(){
 
