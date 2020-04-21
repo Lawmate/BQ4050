@@ -268,7 +268,7 @@ boolean Lorro_BQ4050::readDataReg( char devAddress, byte regAddress, byte *dataV
     if( Wire.available() > 0 ){
       //Cycle through, loading data into array
       for( uint8_t i = 0; i < arrLen; i++ ){
-        dataVal[i] = Wire.receive();
+        dataVal[i] = Wire.read();
       }
     }
     return true;
@@ -332,17 +332,17 @@ boolean Lorro_BQ4050::writeDFByteReg( char devAddress, int16_t regAddress, byte 
 
   //Send the bytes out
   Wire.beginTransmission( devAddress );
-  Wire.send( 0x44 );
-  Wire.send( arrSize + 2 );
+  Wire.write( 0x44 );
+  Wire.write( arrSize + 2 );
   //The address is little endian, so LSB is sent first
-  Wire.send( regAddress1 );
-  Wire.send( regAddress2 );
+  Wire.write( regAddress1 );
+  Wire.write( regAddress2 );
   //loop for the number of data bytes
   for( int i = 0; i < arrSize; i++ ){
-    Wire.send( data[i] );
+    Wire.write( data[i] );
   }
   //send CRC at the end
-  Wire.send( PECcheck );
+  Wire.write( PECcheck );
   byte ack = Wire.endTransmission();
   if( ack == 0 ){
     return true;
