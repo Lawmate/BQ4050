@@ -740,6 +740,7 @@ class Lorro_BQ4050{
   boolean writeDataReg( char devAddress, byte regAddress, byte *dataVal, uint8_t arrLen );
   boolean writeDFByteReg( char devAddress, int16_t regAddress, byte *data, uint8_t arrSize );
   boolean writeCommand( char devAddress, byte regAddress );
+  boolean writeMACommand( char devAddress, byte regAddress );
   void CalculateTable_CRC8();
   byte Compute_CRC8(byte *bytes, uint8_t byteLen);
 

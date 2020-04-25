@@ -372,6 +372,36 @@ boolean Lorro_BQ4050::writeCommand( char devAddress, byte regAddress ){
 
 }
 
+boolean Lorro_BQ4050::writeMACommand( char devAddress, byte regAddress ){
+
+  //Function that simply sends out a Manufacture Access command to the device
+  //by way of writing a zero to a particular address
+
+  //for simplicity, we create an array to hold all the byte we will be sending
+  byte byteArr[5] = { devAddress, 0x44, 0x02, regAddress, 0x00 };
+  //This array is then sent to the CRC checker. The CRC includes all bytes sent.
+  //The arrSize var is static, so there are always 5 bytes to be sent
+  byte PECcheck = Compute_CRC8( byteArr, 5 );
+
+  Wire.beginTransmission( devAddress );
+  //MAC access
+  Wire.write( 0x44 );
+  //number of bytes in to be sent. In when sending a command, this is always 2
+  Wire.write( 0x02 );
+  //little endian of address
+  Wire.write( regAddress );
+  Wire.write( 0x00 );
+  //send CRC at the end
+  Wire.write( PECcheck );
+  byte ack = Wire.endTransmission();
+  if( ack == 0 ){
+    return true;
+  }else{
+    return false; //if I2C comm fails
+  }
+
+}
+
 byte crctable[256];
 boolean printResults = false;
 
